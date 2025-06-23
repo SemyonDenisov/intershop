@@ -3,6 +3,7 @@ package ru.practicum.yandex.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="items")
@@ -21,8 +22,8 @@ public class Item {
     @Column(name="img_path")
     String imgPath;
 
-    @ManyToMany()
-    List<Cart> carts;
+    @ManyToMany(mappedBy = "items")
+    Set<Cart> carts;
 
     public double getPrice() {
         return price;
