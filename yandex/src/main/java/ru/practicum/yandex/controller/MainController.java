@@ -50,7 +50,7 @@ public class MainController {
     @PostMapping(value = "/items/{id}")
     public String changeCountOfItemInCart(@PathVariable(name="id") Integer id, @RequestParam String action, Model model) {
         if (action != null) {
-            cartService.addToCart(id,action);
+            cartService.changeCart(id,action);
         }
         return "redirect:/main/items";
     }
