@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface CartService {
     Optional<Cart> getCartById(Integer cartId);
+    void addToCart(Integer itemId,String action);
 }

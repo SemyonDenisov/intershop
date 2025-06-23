@@ -1,12 +1,10 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
 @Table(name = "orders")
 public record Order(
         @Id

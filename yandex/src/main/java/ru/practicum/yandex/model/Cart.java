@@ -2,6 +2,7 @@ package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,11 @@ public class Cart {
     int id;
     @ManyToMany
     List<Item> items;
+
+    public Cart() {
+        id=1;
+        items = new ArrayList<>();
+    }
 
     public int getId() {
         return id;
