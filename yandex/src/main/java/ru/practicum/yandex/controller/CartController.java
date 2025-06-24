@@ -6,20 +6,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.service.cartService.CartService;
-import ru.practicum.yandex.service.itemService.ItemService;
 
-import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
-    private final ItemService itemService;
 
-    public CartController(CartService cartService, ItemService itemService) {
+
+    public CartController(CartService cartService) {
         this.cartService = cartService;
-        this.itemService = itemService;
     }
 
     @GetMapping(value = "/items")
@@ -27,10 +24,7 @@ public class CartController {
         Cart cart = cartService.getCartById(1).orElse(new Cart());
         model.addAttribute("items", cart.getItems());
         model.addAttribute("empty", cart.getItems().isEmpty());
-        AtomicReference<Double> total = new AtomicReference<>(0.0);
-        cart.getItems()
-                .forEach(item -> total.updateAndGet(v -> v + item.getPrice() * item.getCount()));
-        model.addAttribute("total", total);
+        model.addAttribute("total", cart.getTotal());
         return "cart";
     }
 

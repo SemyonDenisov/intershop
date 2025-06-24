@@ -2,10 +2,10 @@ package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Entity
 @Table(name="cart")
@@ -16,7 +16,7 @@ public class Cart {
 
     @ManyToMany
     @JoinTable(
-            name = "cart_items", // имя join-таблицы
+            name = "cart_items",
             joinColumns = @JoinColumn(name = "cart_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
@@ -35,5 +35,12 @@ public class Cart {
     }
     public void setItems(Set<Item> items) {
         this.items = items;
+    }
+
+    public double getTotal() {
+        AtomicReference<Double> total = new AtomicReference<>(0.0);
+        this.getItems()
+                .forEach(item -> total.updateAndGet(v -> v + item.getPrice() * item.getCount()));
+        return total.get();
     }
 }
