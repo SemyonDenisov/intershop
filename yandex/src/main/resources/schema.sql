@@ -17,3 +17,7 @@ insert into items(title, description, price,count,img_path) values ('title','des
 insert into items(title, description, price,count,img_path) values ('title','description',8.5,0,'none');
 
 
+create table if not exists orders(
+                                    id bigint generated always as identity primary key,
+                                    total_sum numeric not null);
+
