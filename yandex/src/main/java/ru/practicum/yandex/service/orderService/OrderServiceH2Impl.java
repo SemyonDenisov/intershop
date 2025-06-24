@@ -17,17 +17,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceH2Impl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ItemsRepository itemsRepository;
     private final OrderItemRepository orderItemRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository,
-                            CartRepository cartRepository,
-                            ItemsRepository itemsRepository,
-                            OrderItemRepository orderItemRepository) {
+    public OrderServiceH2Impl(OrderRepository orderRepository,
+                              CartRepository cartRepository,
+                              ItemsRepository itemsRepository,
+                              OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
@@ -49,11 +49,6 @@ public class OrderServiceImpl implements OrderService {
             orderWithItems.add(new OrderWithItems(order.getId(), foundItems, order.getTotalSum()));
         });
         return orderWithItems;
-    }
-
-    @Override
-    public void save(Order order) {
-        orderRepository.save(order);
     }
 
     @Override
