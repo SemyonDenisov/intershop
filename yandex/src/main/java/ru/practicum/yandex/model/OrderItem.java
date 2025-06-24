@@ -1,9 +1,12 @@
 package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="order_items")
+@NoArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,20 +14,13 @@ public class OrderItem {
 
     @Column(name="order_id")
     int orderId;
+    @Getter
     @Column(name="item_id")
     int itemId;
 
+    @Getter
     @Column(name="quantity")
     int quantity;
-
-    public int getQuantity() {
-        return quantity;
-    }
-    public int getItemId() {
-        return itemId;
-    }
-
-    public OrderItem() {}
 
     public OrderItem(int orderId, int itemId, int quantity) {
         this.orderId = orderId;

@@ -1,6 +1,8 @@
 package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
@@ -8,54 +10,31 @@ import java.util.Set;
 @Entity
 @Table(name="items")
 public class Item {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+    @Setter
+    @Getter
     @Column(name="title")
     String title;
+    @Setter
+    @Getter
     @Column(name="description")
     String description;
+    @Setter
+    @Getter
     @Column(name="price")
     double price;
+    @Setter
+    @Getter
     @Column(name="count")
     int count;
+    @Setter
+    @Getter
     @Column(name="img_path")
     String imgPath;
 
     @ManyToMany(mappedBy = "items")
     Set<Cart> carts;
-
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = price;
-    }
-    public int getCount() {
-        return count;
-    }
-    public void setCount(int count) {
-        this.count = count;
-    }
-    public String getImgPath() {
-        return imgPath;
-    }
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public int getId() {
-        return id;
-    }
 }

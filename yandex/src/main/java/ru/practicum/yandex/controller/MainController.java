@@ -38,7 +38,7 @@ public class MainController {
             default -> sortForRequest = Sort.by(Sort.Direction.DESC, "id");
         }
         PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize,sortForRequest);
-        Page<Item> items = itemService.findAll(pageRequest);
+        Page<Item> items = itemService.findAll(pageRequest,search);
         Paging paging = new Paging(pageNumber, pageSize, items.getTotalPages() > pageNumber, pageNumber > 1);
         model.addAttribute("items", Lists.partition(items.getContent(), 5));
         model.addAttribute("search", search);

@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface OrderService {
     List<OrderWithItems> findAll();
     Optional<OrderWithItems> findById(int id);
-    void save(Order order);
     void createOrder(Cart cart);
 }

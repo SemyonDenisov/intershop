@@ -9,7 +9,7 @@ import ru.practicum.yandex.model.Item;
 import java.util.Optional;
 
 public interface ItemService {
-    Page<Item> findAll(PageRequest pageable);
+    Page<Item> findAll(PageRequest pageable,String title);
     Optional<Item> findById(Integer id);
     void addItem(String title, String description, Double price, MultipartFile image);
 }

@@ -9,7 +9,6 @@ import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
 
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,9 +26,11 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Page<Item> findAll(PageRequest pageable) {
-
-        return itemsRepository.findAll(pageable);
+    public Page<Item> findAll(PageRequest pageable,String title) {
+        if(title == null || title.isEmpty()) {
+            return itemsRepository.findAll(pageable);
+        }
+        else return itemsRepository.findAllByTitleContainingIgnoreCase(pageable,title);
     }
 
     @Override
@@ -48,9 +49,9 @@ public class ItemServiceH2Impl implements ItemService {
                 UUID uuid = UUID.randomUUID();
                 String path = System.getProperty("java.class.path").split(";")[0]+"\\static\\images\\";
                 String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
-                String newImageUrl = path + uuid + "." + extension;
-                image.transferTo(new File(newImageUrl));
-                item.setImgPath(newImageUrl);
+                String name = uuid + "." + extension;
+                image.transferTo(new File(path+name));
+                item.setImgPath(name);
                 itemsRepository.save(item);
             } catch (Exception ignored) {
             }
