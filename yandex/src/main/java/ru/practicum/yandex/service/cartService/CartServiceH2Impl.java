@@ -9,13 +9,13 @@ import ru.practicum.yandex.model.Item;
 import java.util.Optional;
 
 @Service
-public class CartServiceImpl implements CartService {
+public class CartServiceH2Impl implements CartService {
 
     private final CartRepository cartRepository;
     private final ItemsRepository itemsRepository;
 
-    public CartServiceImpl(CartRepository cartRepository,
-                           ItemsRepository itemsRepository) {
+    public CartServiceH2Impl(CartRepository cartRepository,
+                             ItemsRepository itemsRepository) {
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
     }
