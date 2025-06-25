@@ -14,7 +14,6 @@ import ru.practicum.yandex.service.itemService.ItemService;
 
 
 @Controller
-@RequestMapping("/main")
 public class MainController {
 
     private final ItemService itemService;
@@ -25,7 +24,12 @@ public class MainController {
         this.cartService = cartService;
     }
 
-    @GetMapping(value = "/items")
+    @GetMapping(value = "/")
+    public String index(Model model) {
+        return "redirect:/main/items";
+    }
+
+    @GetMapping(value = "/main/items")
     public String items(Model model,
                         @RequestParam(name = "search", defaultValue = "") String search,
                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
@@ -47,7 +51,7 @@ public class MainController {
         return "main";
     }
 
-    @PostMapping(value = "/items/{id}")
+    @PostMapping(value = "/main/items/{id}")
     public String changeCountOfItemInCart(@PathVariable(name="id") Integer id, @RequestParam String action, Model model) {
         if (action != null) {
             cartService.changeCart(id,action);
