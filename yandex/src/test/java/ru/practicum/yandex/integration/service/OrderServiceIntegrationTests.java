@@ -12,6 +12,7 @@ import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.DAO.OrderItemRepository;
 import ru.practicum.yandex.DAO.OrderRepository;
 import ru.practicum.yandex.DTO.OrderWithItems;
+import ru.practicum.yandex.integration.BaseIntegrationTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.model.Order;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class OrderServiceIntegrationTests {
+public class OrderServiceIntegrationTests extends BaseIntegrationTests {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -49,12 +50,11 @@ public class OrderServiceIntegrationTests {
         cartRepository.save(cart);
         orderRepository.save(new Order(3.5));
         orderRepository.save(new Order(4.0));
-
     }
 
     @Test
     void test_findById(){
-        OrderWithItems order = orderService.findById(1).get();
+        OrderWithItems order = orderService.findById(3).get();
         assertEquals(3.5,order.getTotalSum());
     }
 
@@ -67,7 +67,7 @@ public class OrderServiceIntegrationTests {
     @Test
     @Transactional
     void test_createOrder(){
-        orderService.createOrder(cartRepository.findById(1).get());
+        orderService.createOrder(cartRepository.findById(3).get());
         assertEquals(3,orderRepository.findAll().size());
     }
 

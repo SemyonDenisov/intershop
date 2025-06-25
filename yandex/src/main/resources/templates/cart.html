@@ -7,10 +7,10 @@
 
 <body>
 <a href="/orders" style="float:right;">
-    <b>ЗАКАЗЫ &cudarrr;</b>
+    <b>ЗАКАЗЫ</b>
 </a>
 <a href="/main/items" style="float:right;">
-    <b>ГЛАВНАЯ &cudarrr;</b>
+    <b>ГЛАВНАЯ</b>
 </a>
 <table style="width:70%;margin-left:auto;margin-right:auto;">
     <tr th:each="item : ${items}">
@@ -18,7 +18,7 @@
             <table>
                 <tr>
                     <td>
-                        <img width="300" height="300" th:src="${'http://localhost:8080/static/images/'+item.getImgPath()}">
+                        <img width="300" height="300" th:src="${item.getImgPath()==''?'':'http://localhost:8080/static/images/'+item.getImgPath()}"/>
                     </td>
                 </tr>
                 <tr>

@@ -11,16 +11,19 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import ru.practicum.yandex.DAO.ItemsRepository;
+import ru.practicum.yandex.integration.BaseIntegrationTests;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.itemService.ItemService;
 
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class ItemServiceIntegrationTests {
+public class ItemServiceIntegrationTests extends BaseIntegrationTests {
     @Autowired
     private ItemService itemService;
     @Autowired
@@ -29,32 +32,35 @@ public class ItemServiceIntegrationTests {
     @BeforeEach
     public void setUp() {
         itemsRepository.deleteAll();
-        itemsRepository.save(new Item("title1","description1",1.0,0,""));
-        itemsRepository.save(new Item("title2","description2",2.0,1,""));
-        itemsRepository.save(new Item("title3","description3",3.0,2,""));
-        itemsRepository.save(new Item("title4","description4",4.0,3,""));
-        itemsRepository.save(new Item("title5","description5",5.0,4,""));
+        itemsRepository.save(new Item("title1", "description1", 1.0, 0, ""));
+        itemsRepository.save(new Item("title2", "description2", 2.0, 1, ""));
+        itemsRepository.save(new Item("title3", "description3", 3.0, 2, ""));
+        itemsRepository.save(new Item("title4", "description4", 4.0, 3, ""));
+        itemsRepository.save(new Item("title5", "description5", 5.0, 4, ""));
     }
+
     @Test
     public void test_addItem() {
-        MultipartFile emptyFile = new MockMultipartFile("file.png",new byte[0]);
-        itemService.addItem("title","text",9.0, emptyFile);
-        Item item = itemsRepository.findById(13).get();
-        assertEquals("title",item.getTitle());
+        MultipartFile emptyFile = new MockMultipartFile("file.png", new byte[0]);
+        itemService.addItem("title", "text", 9.0, emptyFile);
+        List<Item> items = itemsRepository.findAll();
+        Item item = itemsRepository.findById(items.get(items.size() - 1).getId()).get();
+        assertEquals("title", item.getTitle());
     }
 
     @Test
     public void test_findById() {
-        Item item = itemService.findById(8).get();
-        assertEquals(item.getId(), 8);
-        assertEquals("title1",item.getTitle());
+        int id = itemsRepository.findAll().get(0).getId();
+        Item item = itemService.findById(id).get();
+        assertEquals(item.getId(), id);
+        assertEquals("title1", item.getTitle());
     }
 
     @Test
     public void test_findAll() {
-        Page<Item> items = itemService.findAll(PageRequest.of(0,2),"t");
-        assertEquals(2,items.getContent().size());
-        assertEquals(5,items.getTotalElements());
+        Page<Item> items = itemService.findAll(PageRequest.of(0, 2), "t");
+        assertEquals(2, items.getContent().size());
+        assertEquals(5, items.getTotalElements());
     }
 
 }
