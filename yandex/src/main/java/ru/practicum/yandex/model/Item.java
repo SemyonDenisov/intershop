@@ -1,14 +1,16 @@
 package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name="items")
+@NoArgsConstructor
 public class Item {
     @Getter
     @Setter
@@ -38,4 +40,12 @@ public class Item {
 
     @ManyToMany(mappedBy = "items")
     Set<Cart> carts;
+
+    public Item(String title, String description, double price, int count, String imgPath) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.count = count;
+        this.imgPath = imgPath;
+    }
 }
