@@ -26,11 +26,10 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Page<Item> findAll(PageRequest pageable,String title) {
-        if(title == null || title.isEmpty()) {
+    public Page<Item> findAll(PageRequest pageable, String title) {
+        if (title == null || title.isEmpty()) {
             return itemsRepository.findAll(pageable);
-        }
-        else return itemsRepository.findAllByTitleContainingIgnoreCase(pageable,title);
+        } else return itemsRepository.findAllByTitleContainingIgnoreCase(pageable, title);
     }
 
     @Override
@@ -47,14 +46,18 @@ public class ItemServiceH2Impl implements ItemService {
         if (image != null) {
             try {
                 UUID uuid = UUID.randomUUID();
-                String path = System.getProperty("java.class.path");
-                String extension = Objects.requireNonNull(image.getName()).split("\\.")[1];
+                String path = System.getProperty("java.class.path").split(";")[0];
+                String extension;
+                if (image.getName().split("\\.").length == 1) {
+                    extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
+                } else {
+                    extension = Objects.requireNonNull(image.getName()).split("\\.")[1];
+                }
                 String name = uuid + "." + extension;
                 item.setImgPath(name);
                 itemsRepository.save(item);
-                image.transferTo(new File(path+name));
+                image.transferTo(new File(path +"\\static\\images\\"+ name));
             } catch (Exception ignored) {
-                System.out.println(ignored.getMessage());
             }
         }
     }
