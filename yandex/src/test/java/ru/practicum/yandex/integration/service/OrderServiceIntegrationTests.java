@@ -54,7 +54,7 @@ public class OrderServiceIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void test_findById(){
-        OrderWithItems order = orderService.findById(3).get();
+        OrderWithItems order = orderService.findById(orderService.findAll().get(0).getId()).get();
         assertEquals(3.5,order.getTotalSum());
     }
 
@@ -67,7 +67,7 @@ public class OrderServiceIntegrationTests extends BaseIntegrationTests {
     @Test
     @Transactional
     void test_createOrder(){
-        orderService.createOrder(cartRepository.findById(3).get());
+        orderService.createOrder(cartRepository.findById(cartRepository.findAll().get(0).getId()).get());
         assertEquals(3,orderRepository.findAll().size());
     }
 
