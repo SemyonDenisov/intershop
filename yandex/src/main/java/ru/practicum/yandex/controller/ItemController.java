@@ -6,13 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 
-import java.io.File;
-import java.util.Objects;
-import java.util.UUID;
+
 
 
 @Controller
@@ -45,12 +42,12 @@ public class ItemController {
     }
 
     @GetMapping(value = "/items/add-form")
-    public String addItemForm(Model model) {
+    public String addItemForm() {
         return "add-item";
     }
 
     @PostMapping(value = "/items/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public String editPost(@RequestParam(name = "title") String title,
+    public String addItem(@RequestParam(name = "title") String title,
                            @RequestPart(name = "image") MultipartFile image,
                            @RequestParam(name = "price") Double price,
                            @RequestParam(name = "description") String description) {

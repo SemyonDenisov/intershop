@@ -29,7 +29,7 @@ public class CartController {
     }
 
     @PostMapping(value = "/items/{id}")
-    public String addToCart(@PathVariable(name = "id") Integer id, @RequestParam(name = "action") String action, Model model) {
+    public String addToCart(@PathVariable(name = "id") Integer id, @RequestParam(name = "action") String action) {
         if (action != null) {
             cartService.changeCart(id, action);
         }

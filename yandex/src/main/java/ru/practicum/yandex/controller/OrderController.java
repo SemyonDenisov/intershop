@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.yandex.DTO.OrderWithItems;
-import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.orderService.OrderService;
 
@@ -20,7 +19,6 @@ public class OrderController    {
 
     @GetMapping
     public String orders(Model model) {
-
         model.addAttribute("orders", orderService.findAll());
         return "orders";
     }
