@@ -47,13 +47,14 @@ public class ItemServiceH2Impl implements ItemService {
         if (image != null) {
             try {
                 UUID uuid = UUID.randomUUID();
-                String path = System.getProperty("java.class.path").split(";")[0]+"\\static\\images\\";
-                String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
+                String path = System.getProperty("java.class.path");
+                String extension = Objects.requireNonNull(image.getName()).split("\\.")[1];
                 String name = uuid + "." + extension;
-                image.transferTo(new File(path+name));
                 item.setImgPath(name);
                 itemsRepository.save(item);
+                image.transferTo(new File(path+name));
             } catch (Exception ignored) {
+                System.out.println(ignored.getMessage());
             }
         }
     }
