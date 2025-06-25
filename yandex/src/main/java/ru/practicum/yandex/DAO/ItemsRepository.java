@@ -1,6 +1,7 @@
 package ru.practicum.yandex.DAO;
 
 
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface ItemsRepository extends JpaRepository<Item, Integer> {
-    Page<Item> findAll(Pageable pageable);
-    Optional<Item> findById(Integer id);
+    @NonNull
+    Page<Item> findAllByTitleContainingIgnoreCase(@NonNull Pageable pageable,String title);
+    @NonNull
+    Optional<Item> findById(@NonNull Integer id);
 }

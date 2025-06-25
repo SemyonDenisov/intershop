@@ -1,6 +1,9 @@
 package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 
 import java.util.HashSet;
@@ -9,11 +12,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Entity
 @Table(name="cart")
+@AllArgsConstructor
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     int id;
 
+    @Setter
+    @Getter
     @ManyToMany
     @JoinTable(
             name = "cart_items",
@@ -25,16 +32,6 @@ public class Cart {
     public Cart() {
         id=1;
         items = new HashSet<>();
-    }
-
-    public int getId() {
-        return id;
-    }
-    public Set<Item> getItems() {
-        return items;
-    }
-    public void setItems(Set<Item> items) {
-        this.items = items;
     }
 
     public double getTotal() {

@@ -1,61 +1,51 @@
 package ru.practicum.yandex.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name="items")
+@NoArgsConstructor
 public class Item {
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+    @Setter
+    @Getter
     @Column(name="title")
     String title;
+    @Setter
+    @Getter
     @Column(name="description")
     String description;
+    @Setter
+    @Getter
     @Column(name="price")
     double price;
+    @Setter
+    @Getter
     @Column(name="count")
     int count;
+    @Setter
+    @Getter
     @Column(name="img_path")
     String imgPath;
 
     @ManyToMany(mappedBy = "items")
     Set<Cart> carts;
 
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = price;
-    }
-    public int getCount() {
-        return count;
-    }
-    public void setCount(int count) {
-        this.count = count;
-    }
-    public String getImgPath() {
-        return imgPath;
-    }
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
+    public Item(String title, String description, double price, int count, String imgPath) {
         this.title = title;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
         this.description = description;
-    }
-    public int getId() {
-        return id;
+        this.price = price;
+        this.count = count;
+        this.imgPath = imgPath;
     }
 }
