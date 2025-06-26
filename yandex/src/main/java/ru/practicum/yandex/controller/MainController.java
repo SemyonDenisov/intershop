@@ -12,6 +12,8 @@ import ru.practicum.yandex.paging.Paging;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 
+import java.io.IOException;
+
 
 @Controller
 public class MainController {
@@ -57,6 +59,12 @@ public class MainController {
             cartService.changeCart(id,action);
         }
         return "redirect:/main/items";
+    }
+
+    @GetMapping(value = "/main/image/{filename}")
+    @ResponseBody
+    public byte[] image(@PathVariable String filename) throws IOException {
+        return itemService.getImage(filename);
     }
 
 }
