@@ -4,6 +4,8 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  image:
+    savePath: /var/lib/storage/images/
   jpa:
     hibernate:
       ddl-auto: create

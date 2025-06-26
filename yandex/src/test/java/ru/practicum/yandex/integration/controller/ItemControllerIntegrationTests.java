@@ -71,7 +71,7 @@ public class ItemControllerIntegrationTests extends BaseIntegrationTests {
     }
 
     @Nested
-    class CleanupTest {
+    class AddItemTest {
 
         @Value("${spring.image.savePath}")
         String imageStorePath;

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.practicum.yandex.DAO.CartRepository;
 import ru.practicum.yandex.DAO.ItemsRepository;
@@ -21,6 +22,7 @@ import java.util.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class OrderServiceUnitTests {
     @Autowired
     private OrderService orderService;

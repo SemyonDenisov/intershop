@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 import ru.practicum.yandex.DAO.ItemsRepository;
@@ -25,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class ItemServiceUnitTests {
     @MockitoBean
     private ItemsRepository itemsRepository;
@@ -37,36 +39,15 @@ public class ItemServiceUnitTests {
         reset(itemsRepository);
     }
 
-    @Nested
-    class CleanupTest {
 
-        @Value("${spring.image.savePath}")
-        String imageStorePath;
-
-        void cleanup() {
-            Stream.of(Objects.requireNonNull(new File(imageStorePath).listFiles()))
-                    .filter(file -> {
-                        try {
-                            return Files.readAllBytes(file.toPath()).length<10;
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).forEach(File::delete);
-        }
-
-        @Test
-        public void test_addItem() {
-            try {
-                when(itemsRepository.save(any(Item.class))).thenReturn(new Item());
-                MultipartFile emptyFile = new MockMultipartFile("file.png", new byte[0]);
-                itemService.addItem("title", "text", 9.0, emptyFile);
-                verify(itemsRepository, times(1)).save(any(Item.class));
-                cleanup();
-            } catch (Exception e) {
-                throw e;
-            }
-        }
+    @Test
+    public void test_addItem() {
+        when(itemsRepository.save(any(Item.class))).thenReturn(new Item());
+        MultipartFile emptyFile = new MockMultipartFile("file.png", new byte[0]);
+        itemService.addItem("title", "text", 9.0, emptyFile);
+        verify(itemsRepository, times(1)).save(any(Item.class));
     }
+
 
     @Test
     public void test_findById() {

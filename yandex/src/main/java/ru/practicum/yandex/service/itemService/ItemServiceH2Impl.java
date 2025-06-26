@@ -62,8 +62,8 @@ public class ItemServiceH2Impl implements ItemService {
                 }
                 String name = uuid + "." + extension;
                 item.setImgPath(name);
-                image.transferTo(new File(imagePath + name));
                 itemsRepository.save(item);
+                image.transferTo(new File(imagePath + name));
             } catch (Exception ignored) {
             }
         }
