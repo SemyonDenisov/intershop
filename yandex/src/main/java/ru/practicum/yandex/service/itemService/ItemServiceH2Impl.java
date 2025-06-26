@@ -1,14 +1,22 @@
 package ru.practicum.yandex.service.itemService;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,8 +24,8 @@ import java.util.UUID;
 @Service
 public class ItemServiceH2Impl implements ItemService {
 
-    @Value("classpath:/static/")
-    private String imageSavePath;
+    @Value("${spring.image.savePath}")
+    String imagePath;
 
     private final ItemsRepository itemsRepository;
 
@@ -46,7 +54,6 @@ public class ItemServiceH2Impl implements ItemService {
         if (image != null) {
             try {
                 UUID uuid = UUID.randomUUID();
-                String path = System.getProperty("java.class.path").split(";")[0];
                 String extension;
                 if (image.getName().split("\\.").length == 1) {
                     extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
@@ -56,9 +63,14 @@ public class ItemServiceH2Impl implements ItemService {
                 String name = uuid + "." + extension;
                 item.setImgPath(name);
                 itemsRepository.save(item);
-                image.transferTo(new File(path +"\\static\\images\\"+ name));
+                image.transferTo(new File(imagePath + name));
             } catch (Exception ignored) {
             }
         }
+    }
+    @Override
+    public byte[] getImage (String filename) throws IOException {
+        byte[] image =  Files.readAllBytes(Path.of(imagePath + filename));
+        return image;
     }
 }
