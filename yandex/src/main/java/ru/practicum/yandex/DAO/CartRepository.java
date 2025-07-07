@@ -1,12 +1,14 @@
 package ru.practicum.yandex.DAO;
 
 import lombok.NonNull;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Cart;
 
-import java.util.Optional;
 
-public interface CartRepository extends JpaRepository<Cart, Integer> {
+@Repository
+public interface CartRepository extends R2dbcRepository<Cart, Integer> {
     @NonNull
-    Optional<Cart> findById(@NonNull Integer cartId);
+    Mono<Cart> findById(@NonNull Integer cartId);
 }
