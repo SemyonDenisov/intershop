@@ -1,12 +1,11 @@
 package ru.practicum.yandex.service.cartService;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.CartRepository;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Item;
-
-import java.util.Optional;
 
 @Service
 public class CartServiceH2Impl implements CartService {
@@ -21,46 +20,35 @@ public class CartServiceH2Impl implements CartService {
     }
 
     @Override
-    public Optional<Cart> getCartById(Integer cartId) {
+    public Mono<Cart> getCartById(Integer cartId) {
         return cartRepository.findById(cartId);
     }
 
-
     @Override
-    public void changeCart(Integer itemId, String action) {
-        Cart cart = cartRepository.findById(1).orElse(null);
-        if (cart == null) {
-            cart = new Cart();
-        }
-
-        Item item = itemsRepository.findById(itemId).orElse(null);
-        if (item != null) {
-            switch (action.toUpperCase()) {
-                case "PLUS" -> {
-                    item.setCount(item.getCount() + 1);
-                    cart.getItems().add(item);
-                    cartRepository.save(cart);
-                    itemsRepository.save(item);
-
-                }
-                case "MINUS" -> {
-                    if (item.getCount() > 1) {
-                        item.setCount(item.getCount() - 1);
-                        if (item.getCount() == 0) {
-                            cart.getItems().remove(item);
-                        }
-                        cartRepository.save(cart);
-                        itemsRepository.save(item);
-                    }
-                }
-                case "DELETE"->{
+    public Mono<Boolean> changeCart(Integer itemId, String action) {
+        return Mono.zip(
+                cartRepository.findById(1),
+                itemsRepository.findById(itemId)
+        ).flatMap(tuple -> {
+            Cart cart = tuple.getT1();
+            Item item = tuple.getT2();
+            switch (action) {
+                case "PLUS" -> item.setCount(item.getCount() + 1);
+                case "MINUS" -> item.setCount(item.getCount() - 1);
+                case "DELETE" -> {
                     cart.getItems().remove(item);
                     item.setCount(0);
-                    cartRepository.save(cart);
-                    itemsRepository.save(item);
                 }
             }
-        }
-
+            return Mono.zip(
+                    cartRepository.save(cart),
+                    itemsRepository.save(item)
+            ).flatMap(tuple1 -> {
+                        tuple1.getT1();
+                        tuple1.getT2();
+                        return Mono.just(true);
+                    }
+            );
+        });
     }
 }

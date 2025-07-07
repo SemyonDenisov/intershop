@@ -1,6 +1,10 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,23 +14,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Entity
+@Getter
 @Table(name="cart")
 @AllArgsConstructor
 public class Cart {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
     int id;
 
     @Setter
-    @Getter
-    @ManyToMany
-    @JoinTable(
-            name = "cart_items",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )
+    @Transient
     Set<Item> items;
 
     public Cart() {
