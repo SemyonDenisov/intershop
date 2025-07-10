@@ -1,14 +1,18 @@
+logging:
+  level:
+    web: debug
+
 spring:
   application:
     name=yandex
   r2dbc:
-    url: r2dbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=true
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE
     username: sa
     password:
   jpa:
     defer-datasource-initialization: true
   image:
-    savePath: /var/lib/storage/images/
+    savePath: E:\Yandex\intershop\yandex\storage\images\
   servlet:
     multipart:
       file-size-threshold: 1048576

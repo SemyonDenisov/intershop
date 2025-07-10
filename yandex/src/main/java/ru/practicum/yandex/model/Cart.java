@@ -27,7 +27,6 @@ public class Cart {
 
     public Cart() {
         id=1;
-        items = new HashSet<>();
     }
 
     public double getTotal() {

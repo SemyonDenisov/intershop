@@ -1,10 +1,10 @@
 package ru.practicum.yandex.DAO;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import reactor.core.publisher.Flux;
 import ru.practicum.yandex.model.OrderItem;
 
-import java.util.List;
 
-public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
-    List<OrderItem> findAllByOrderId(int orderId);
+public interface OrderItemRepository extends R2dbcRepository<OrderItem, Integer> {
+    Flux<OrderItem> findAllByOrderId(int orderId);
 }

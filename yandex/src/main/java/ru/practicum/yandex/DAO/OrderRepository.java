@@ -1,7 +1,7 @@
 package ru.practicum.yandex.DAO;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import ru.practicum.yandex.model.Order;
 
-public interface OrderRepository extends JpaRepository<Order, Integer> {
+public interface OrderRepository extends R2dbcRepository<Order, Integer> {
 }

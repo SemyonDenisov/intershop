@@ -1,14 +1,12 @@
 package ru.practicum.yandex.service.itemService;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
@@ -16,12 +14,12 @@ import ru.practicum.yandex.model.Item;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+
 import java.util.Objects;
-import java.util.Optional;
+
 import java.util.UUID;
 
 @Service
@@ -37,10 +35,12 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Flux<Item> findAll(PageRequest pageable, String title) {
+    public Flux<Item> findAll(int pageSize,int pageNumber, String title, Sort sort) {
         if (title == null || title.isEmpty()) {
-            return itemsRepository.findAll(pageable);
-        } else return itemsRepository.findAllByTitleContainingIgnoreCase(pageable, title);
+            return itemsRepository.findAll(sort).skip((long) pageSize * (pageNumber - 1))
+                    .take(pageSize);
+        } else return itemsRepository.findAllByTitleContainingIgnoreCase(title,sort).skip((long) pageSize * (pageNumber - 1))
+                .take(pageSize);
     }
 
     @Override
@@ -73,5 +73,10 @@ public class ItemServiceH2Impl implements ItemService {
     @Override
     public byte[] getImage(String filename) throws IOException {
         return Files.readAllBytes(Path.of(imagePath + filename));
+    }
+
+    @Override
+    public Mono<Long> getCount(){
+        return itemsRepository.count();
     }
 }

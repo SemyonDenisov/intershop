@@ -11,8 +11,6 @@ import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 
 
-
-
 @Controller
 public class ItemController {
 
@@ -33,23 +31,26 @@ public class ItemController {
         });
     }
 
-    @PostMapping(value = "/items/{id}")
+    @PostMapping(value = "/items/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Mono<String> addItemToCart(@PathVariable(name = "id") Integer id,
-                                @RequestParam(name = "action") String action) {
-        return cartService.changeCart(id,action).map(res-> "redirect:/items/" + id);
+                                      @RequestPart(name = "action") String action) {
+        return cartService.changeCart(id, action).thenReturn("redirect:/items/" + id);
     }
 
     @GetMapping(value = "/items/add-form")
-    public String addItemForm() {
-        return "add-item";
+    public Mono<String> addItemForm() {
+        return Mono.just("add-item");
     }
 
     @PostMapping(value = "/items/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Mono<String> addItem(@RequestParam(name = "title") String title,
-                           @RequestPart(name = "image") Mono<FilePart> image,
-                           @RequestParam(name = "price") Double price,
-                           @RequestParam(name = "description") String description) {
-        return itemService.addItem(title,description,price,image).map(item-> "redirect:/main/items/");
+    public Mono<String> addItem(@RequestPart(name = "title") String title,
+                                @RequestPart(name = "image") Mono<FilePart> image,
+                                @RequestPart(name = "price") String price,
+                                @RequestPart(name = "description") String description) {
+        return itemService.addItem(title, description, Double.parseDouble(price), image).map(item -> {
+            System.out.println("sss");
+            return item;
+        }).thenReturn("redirect:/main/items");
     }
 
 }

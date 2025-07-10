@@ -1,6 +1,7 @@
 package ru.practicum.yandex.controller;
 
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +22,17 @@ public class CartController {
 
     @GetMapping(value = "/items")
     public Mono<String> showCart(Model model) {
-        return cartService.getCartById(1).handle((cart, sink) -> {
-            if (cart == null) {
-                sink.error(new RuntimeException("Cart is null"));
-                return;
-            }
-            model.addAttribute("items", cart.getItems());
-            model.addAttribute("empty", cart.getItems().isEmpty());
-            model.addAttribute("total", cart.getTotal());
-            sink.next("cart");
-        });
+        return cartService.getCartById(1).onErrorResume(error->cartService.getCartById(1))
+                .flatMap(cart -> {
+                    model.addAttribute("items", cart.getItems());
+                    model.addAttribute("empty", cart.getItems().isEmpty());
+                    model.addAttribute("total", cart.getTotal());
+                    return Mono.just("cart");
+                });
     }
 
-    @PostMapping(value = "/items/{id}")
-    public Mono<String> addToCart(@PathVariable(name = "id") Integer id, @RequestParam(name = "action") String action) {
-        return cartService.changeCart(id, action).map(res -> "redirect:/cart/items");
+    @PostMapping(value = "/items/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Mono<String> addToCart(@PathVariable(name = "id") Integer id, @RequestPart(name = "action") String action) {
+        return cartService.changeCart(id, action).thenReturn("redirect:/cart/items");
     }
 }

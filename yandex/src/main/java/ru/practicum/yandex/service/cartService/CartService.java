@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface CartService {
     Mono<Cart> getCartById(Integer cartId);
-    Mono<Boolean> changeCart(Integer itemId,String action);
+    Mono<Void> changeCart(Integer itemId,String action);
 }

@@ -1,22 +1,23 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
 
-@Entity
 @Table(name = "orders")
 @Getter
 @Setter
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(name = "total_sum")
+    @Column("total_sum")
     double totalSum;
 
     public Order(double totalSum) {
