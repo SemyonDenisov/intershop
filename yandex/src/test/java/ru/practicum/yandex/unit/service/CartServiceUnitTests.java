@@ -2,13 +2,17 @@ package ru.practicum.yandex.unit.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import reactor.core.publisher.Mono;
+import ru.practicum.yandex.DAO.CartItemRepository;
 import ru.practicum.yandex.DAO.CartRepository;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Cart;
+import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 
@@ -25,6 +29,9 @@ public class CartServiceUnitTests {
     private CartRepository cartRepository;
 
     @MockitoBean
+    private CartItemRepository cartItemRepository;
+
+    @MockitoBean
     private ItemsRepository itemsRepository;
 
     @BeforeEach
@@ -35,18 +42,24 @@ public class CartServiceUnitTests {
 
     @Test
     void test_findById(){
-        when(cartRepository.findById(1)).thenReturn(Optional.of(new Cart()));
-        cartService.getCartById(1);
+        Cart cart = new Cart();
+        when(cartRepository.findById(1)).thenReturn(Mono.just(cart));
+        cartService.getCartById(1).block();
         verify(cartRepository, times(1)).findById(1);
     }
 
     @Test
     void test_changeCart(){
-        when(cartRepository.findById(1)).thenReturn(Optional.of(new Cart()));
-        when(itemsRepository.findById(1)).thenReturn(Optional.of(new Item()));
-        cartService.changeCart(1,"plus");
+        Item item = new Item();
+        CartItem cartItem = new CartItem(1,1);
+        when(cartRepository.findById(1)).thenReturn(Mono.just(new Cart()));
+        when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
+        when(itemsRepository.save(item)).thenReturn(Mono.just(new Item()));
+
+        when(cartItemRepository.findByCartIdAndItemId(1,1)).thenReturn(Mono.just(cartItem));
+        when(cartItemRepository.save(any(CartItem.class))).thenReturn(Mono.just(cartItem));
+        cartService.changeCart(1,"plus").block();
         verify(itemsRepository, times(1)).findById(1);
-        verify(cartRepository, times(1)).findById(1);
     }
 
 }
