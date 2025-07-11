@@ -4,70 +4,94 @@ package ru.practicum.yandex.unit.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
+import ru.practicum.yandex.service.orderService.OrderService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebFluxTest
 public class ItemControllerUnitTests {
     @Autowired
-    MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @MockitoBean
     CartService cartService;
     @MockitoBean
     ItemService itemService;
+    @MockitoBean
+    OrderService orderService;
 
     @BeforeEach
-    public void setUp(){
-        reset(itemService,cartService);
+    public void setUp() {
+        reset(itemService, cartService);
     }
 
     @Test
     void test_getItemInfo() throws Exception {
-        when(itemService.findById(1)).thenReturn(Optional.of(new Item()));
-        mockMvc.perform(MockMvcRequestBuilders.get("/items/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"));
+        Item item = new Item();
+        item.setCount(1);
+        item.setPrice(3.0);
+        item.setDescription("This is a test");
+        when(itemService.findById(1)).thenReturn(Mono.just(item));
+        webTestClient.get().uri("/items/1")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.TEXT_HTML_VALUE);
+        verify(itemService, times(1)).findById(1);
     }
 
     @Test
     void test_addItemToCart() throws Exception {
-        doNothing().when(cartService).changeCart(1,"plus");
-        mockMvc.perform(MockMvcRequestBuilders.post("/items/1")
-                .queryParam("action","plus"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(
-                        header().stringValues(HttpHeaders.LOCATION, "/items/1")
-                );
+        when(cartService.changeCart(1, "plus")).thenReturn(Mono.empty());
+        var builder = new MultipartBodyBuilder();
+        builder.part("action", "plus");
+        webTestClient.post()
+                .uri("/items/1")
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/1");
+        verify(cartService, times(1)).changeCart(1, "plus");
     }
 
     @Test
     void test_addItem() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("image", "test.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, "test".getBytes());
-        doNothing().when(itemService).addItem("","",1.0,file);
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/items/add")                        .file(file)
-                        .part(new MockPart("title", "".getBytes()))
-                        .file(file)
-                        .part(new MockPart("description", "".getBytes()))
-                        .part(new MockPart("price", "1.0".getBytes()))
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().stringValues(HttpHeaders.LOCATION, "/main/items"));;
+        byte[] content = "test-content".getBytes(StandardCharsets.UTF_8);
+
+        var builder = new MultipartBodyBuilder();
+        builder.part("title", "test");
+        builder.part("image", new ByteArrayResource(content));
+        builder.part("price", "3.0");
+        builder.part("description", "This is a test");
+
+        when(itemService.addItem(eq("test"), eq("This is a test"), eq(3.0), any())).thenReturn(Mono.empty());
+        webTestClient.post().uri("/items/add")
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/main/items");
+        verify(itemService,times(1)).addItem(eq("test"), eq("This is a test"), eq(3.0), any());
     }
 }

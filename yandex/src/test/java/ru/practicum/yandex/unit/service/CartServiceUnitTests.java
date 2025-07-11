@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.CartItemRepository;
 import ru.practicum.yandex.DAO.CartRepository;
@@ -43,7 +44,14 @@ public class CartServiceUnitTests {
     @Test
     void test_findById(){
         Cart cart = new Cart();
+        CartItem cartItem = new CartItem();
+        cartItem.setCartId(1);
+        cartItem.setItemId(1);
+        Item item = new Item();
+        item.setId(1);
         when(cartRepository.findById(1)).thenReturn(Mono.just(cart));
+        when(cartItemRepository.findByCartId(1)).thenReturn(Flux.just(cartItem));
+        when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
         cartService.getCartById(1).block();
         verify(cartRepository, times(1)).findById(1);
     }

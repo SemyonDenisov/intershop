@@ -22,7 +22,7 @@ public class CartController {
 
     @GetMapping(value = "/items")
     public Mono<String> showCart(Model model) {
-        return cartService.getCartById(1).onErrorResume(error->cartService.getCartById(1))
+        return cartService.getCartById(1)
                 .flatMap(cart -> {
                     model.addAttribute("items", cart.getItems());
                     model.addAttribute("empty", cart.getItems().isEmpty());
