@@ -7,12 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.integration.BaseIntegrationTests;
 import ru.practicum.yandex.model.Item;
@@ -23,6 +28,9 @@ import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -42,35 +50,22 @@ public class ItemServiceIntegrationTests extends BaseIntegrationTests {
         itemsRepository.save(new Item("title5", "description5", 5.0, 4, "1.jpg")).block();
     }
 
-    @Nested
-    class AddItemTest {
 
-        @Value("${spring.image.savePath}")
-        String imageStorePath;
+    @Test
+    public void test_addItem() {
+        try {
+            FilePart mockFilePart = mock(FilePart.class);
+            when(mockFilePart.filename()).thenReturn("test.png");
+            when(mockFilePart.transferTo(any(File.class))).thenReturn(Mono.empty());
 
-        void cleanup() {
+            itemService.addItem("title", "text", 9.0, Mono.just(mockFilePart)).block();
             List<Item> items = itemsRepository.findAll().collectList().block();
-            String imagePath = items.get(items.size() - 1).getImgPath();
-            new File(imageStorePath+imagePath).delete();
+            Item item = itemsRepository.findById(items.get(items.size() - 1).getId()).block();
+            assertEquals("title", item.getTitle());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-
-//        @Test
-//        public void test_addItem() {
-//            try {
-//                MultipartFile emptyFile = new MockMultipartFile("file.png", new byte[0]);
-//
-//                itemService.addItem("title", "text", 9.0, emptyFile);
-//                List<Item> items = itemsRepository.findAll().collectList().block();
-//                Item item = itemsRepository.findById(items.get(items.size() - 1).getId()).get();
-//                assertEquals("title", item.getTitle());
-//                cleanup();
-//            }
-//            catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
- }
+    }
 
 
     @Test
@@ -83,7 +78,7 @@ public class ItemServiceIntegrationTests extends BaseIntegrationTests {
 
     @Test
     public void test_findAll() {
-        List<Item> items = itemService.findAll(3,1, "t", Sort.by(Sort.Direction.DESC,"id")).collectList().block();
+        List<Item> items = itemService.findAll(3, 1, "t", Sort.by(Sort.Direction.DESC, "id")).collectList().block();
         assertEquals(3, items.size());
     }
 
