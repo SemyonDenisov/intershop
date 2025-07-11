@@ -31,7 +31,7 @@ public class CartController {
                 });
     }
 
-    @PostMapping(value = "/items/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Mono<String> addToCart(@PathVariable(name = "id") Integer id, @RequestPart(name = "action") String action) {
         return cartService.changeCart(id, action).thenReturn("redirect:/cart/items");
     }

@@ -1,6 +1,7 @@
 package ru.practicum.yandex.service.cartService;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.CartItemRepository;
 import ru.practicum.yandex.DAO.CartRepository;
@@ -10,6 +11,7 @@ import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class CartServiceH2Impl implements CartService {
@@ -28,22 +30,23 @@ public class CartServiceH2Impl implements CartService {
     @Override
     public Mono<Cart> getCartById(Integer cartId) {
         return cartRepository.findById(cartId)
-                .flatMap(cart-> cartItemRepository.findByCartId(cartId)
-                .map(CartItem::getItemId)
-                .flatMap(itemsRepository::findById)
-                .collectList()
-                .map(items->{
-                    cart.setItems(new HashSet<>(items));
-                    return cart;
-                }));
+                .switchIfEmpty(this.getCart())
+                .flatMap(cart -> cartItemRepository.findByCartId(cartId)
+                        .map(CartItem::getItemId)
+                        .flatMap(itemsRepository::findById)
+                        .collectList()
+                        .map(items -> {
+                            cart.setItems(new HashSet<>(items));
+                            return cart;
+                        }));
     }
 
     @Override
     public Mono<Void> changeCart(Integer itemId, String action) {
-        return cartItemRepository.findByCartIdAndItemId(1,itemId)
-                .switchIfEmpty(cartItemRepository.save(new CartItem(1,itemId)))
+        return cartItemRepository.findByCartIdAndItemId(1, itemId)
+                .switchIfEmpty(cartItemRepository.save(new CartItem(1, itemId)))
                 .zipWith(itemsRepository.findById(itemId))
-                .flatMap(tuple->{
+                .flatMap(tuple -> {
                     Item item = tuple.getT2();
                     switch (action.toUpperCase()) {
                         case "PLUS" -> {
@@ -51,9 +54,9 @@ public class CartServiceH2Impl implements CartService {
                             return itemsRepository.save(item);
                         }
                         case "MINUS" -> {
-                            if(item.getCount()>0) {
-                            item.setCount(item.getCount() - 1);
-                            return itemsRepository.save(item);
+                            if (item.getCount() > 0) {
+                                item.setCount(item.getCount() - 1);
+                                return itemsRepository.save(item);
                             }
                         }
                         case "DELETE" -> {
@@ -63,30 +66,10 @@ public class CartServiceH2Impl implements CartService {
                     }
                     return Mono.empty();
                 }).then();
-//        Mono.zip(
-//                        this.getCartById(1),
-//                        itemsRepository.findById(itemId)
-//                ).onErrorResume(error -> Mono.zip(cartRepository.save(new Cart()), itemsRepository.findById(itemId)))
-//                .flatMap(tuple -> {
-//                    Cart cart = tuple.getT1();
-//                    Item item = tuple.getT2();
-//                    switch (action) {
-//                        case "PLUS" -> item.setCount(item.getCount() + 1);
-//                        case "MINUS" -> item.setCount(item.getCount() - 1);
-//                        case "DELETE" -> {
-//                            cart.getItems().remove(item);
-//                            item.setCount(0);
-//                        }
-//                    }
-//                    return Mono.zip(
-//                            cartRepository.save(cart),
-//                            itemsRepository.save(item)
-//                    ).flatMap(tuple1 -> {
-//                                tuple1.getT1();
-//                                tuple1.getT2();
-//                                return Mono.just(true);
-//                            }
-//                    );
-//                });
+    }
+
+    @Override
+    public Mono<Cart> getCart() {
+        return cartRepository.findAll().collectList().map(List::getFirst);
     }
 }
