@@ -50,6 +50,7 @@ public class CartServiceUnitTests {
         Item item = new Item();
         item.setId(1);
         when(cartRepository.findById(1)).thenReturn(Mono.just(cart));
+        when(cartRepository.findAll()).thenReturn(Flux.just(cart));
         when(cartItemRepository.findByCartId(1)).thenReturn(Flux.just(cartItem));
         when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
         cartService.getCartById(1).block();
