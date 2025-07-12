@@ -3,9 +3,10 @@
 *Запуск приложения*
 1) git clone https://github.com/SemyonDenisov/intershop.git
 2) cd .\intershop\yandex
-3) mvn clean package
-4) docker build -t sprint-5 .
-5) docker run -p 8080:8080 sprint-5
+3) поменять savePath в application-test.yml на свой (абсолютный путь до папки storage\images)
+4) mvn clean package
+5) docker build -t sprint-6 .
+6) docker run -p 8080:8080 sprint-6
 
 **Функционал приложения**
 
