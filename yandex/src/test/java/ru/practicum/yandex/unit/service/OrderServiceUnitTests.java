@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
@@ -39,12 +38,12 @@ public class OrderServiceUnitTests {
     }
 
     @Test
-    void test_findById(){
+    void test_findById() {
         Order order = new Order();
         order.setId(1);
         Item item = new Item();
         when(orderRepository.findById(1)).thenReturn(Mono.just(order));
-        when(orderItemRepository.findAllByOrderId(1)).thenReturn(Flux.just(new OrderItem(1,1,3)));
+        when(orderItemRepository.findAllByOrderId(1)).thenReturn(Flux.just(new OrderItem(1, 1, 3)));
         when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
         orderService.findById(1).subscribe();
         verify(orderRepository, times(1)).findById(1);
@@ -53,13 +52,13 @@ public class OrderServiceUnitTests {
     }
 
     @Test
-    void test_findAll(){
+    void test_findAll() {
         Order order = new Order();
         order.setId(1);
         Item item = new Item();
         when(orderRepository.findAll()).thenReturn(Flux.just(order));
         when(orderRepository.findById(1)).thenReturn(Mono.just(order));
-        when(orderItemRepository.findAllByOrderId(1)).thenReturn(Flux.just(new OrderItem(1,1,3)));
+        when(orderItemRepository.findAllByOrderId(1)).thenReturn(Flux.just(new OrderItem(1, 1, 3)));
         when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
         orderService.findAll().subscribe();
         verify(orderRepository, times(1)).findAll();
@@ -68,11 +67,11 @@ public class OrderServiceUnitTests {
     }
 
     @Test
-    void test_createOrder(){
+    void test_createOrder() {
         Order order = new Order();
         order.setId(1);
         order.setTotalSum(1.0);
-        CartItem cartItem = new CartItem(1,1);
+        CartItem cartItem = new CartItem(1, 1);
         when(orderRepository.save(any(Order.class))).thenReturn(Mono.just(order));
         when(cartItemRepository.findByCartId(any(Integer.class))).thenReturn(Flux.just(cartItem));
         when(itemsRepository.save(any(Item.class))).thenReturn(Mono.just(new Item()));

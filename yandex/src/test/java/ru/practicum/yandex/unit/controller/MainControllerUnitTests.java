@@ -13,7 +13,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;

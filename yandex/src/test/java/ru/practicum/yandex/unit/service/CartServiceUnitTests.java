@@ -2,7 +2,6 @@ package ru.practicum.yandex.unit.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +16,6 @@ import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -42,7 +40,7 @@ public class CartServiceUnitTests {
     }
 
     @Test
-    void test_findById(){
+    void test_findById() {
         Cart cart = new Cart();
         CartItem cartItem = new CartItem();
         cartItem.setCartId(1);
@@ -58,16 +56,16 @@ public class CartServiceUnitTests {
     }
 
     @Test
-    void test_changeCart(){
+    void test_changeCart() {
         Item item = new Item();
-        CartItem cartItem = new CartItem(1,1);
+        CartItem cartItem = new CartItem(1, 1);
         when(cartRepository.findById(1)).thenReturn(Mono.just(new Cart()));
         when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
         when(itemsRepository.save(item)).thenReturn(Mono.just(new Item()));
 
-        when(cartItemRepository.findByCartIdAndItemId(1,1)).thenReturn(Mono.just(cartItem));
+        when(cartItemRepository.findByCartIdAndItemId(1, 1)).thenReturn(Mono.just(cartItem));
         when(cartItemRepository.save(any(CartItem.class))).thenReturn(Mono.just(cartItem));
-        cartService.changeCart(1,"plus").block();
+        cartService.changeCart(1, "plus").block();
         verify(itemsRepository, times(1)).findById(1);
     }
 

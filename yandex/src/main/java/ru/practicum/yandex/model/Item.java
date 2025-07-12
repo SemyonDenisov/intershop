@@ -12,7 +12,7 @@ import lombok.Setter;
 import java.util.Set;
 
 
-@Table(name="items")
+@Table(name = "items")
 @NoArgsConstructor
 public class Item {
     @Getter

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -68,7 +67,7 @@ public class CartControllerUnitTests {
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .expectHeader().valueEquals(HttpHeaders.LOCATION, "/cart/items");
-        verify(cartService,times(1)).changeCart(1, "plus");
+        verify(cartService, times(1)).changeCart(1, "plus");
 
     }
 }

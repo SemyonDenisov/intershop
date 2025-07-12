@@ -4,15 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.yandex.DAO.*;
-import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.integration.BaseIntegrationTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
@@ -24,7 +20,6 @@ import ru.practicum.yandex.service.orderService.OrderService;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -63,7 +58,7 @@ public class OrderControllerIntegrationTests extends BaseIntegrationTests {
     }
 
     @Test
-    void test_getOrders(){
+    void test_getOrders() {
         webClient.get().uri("/orders/{id}", orderRepository.findAll().collectList().block().get(0).getId())
                 .exchange()
                 .expectStatus().isOk()
@@ -78,12 +73,12 @@ public class OrderControllerIntegrationTests extends BaseIntegrationTests {
     @Test
     void test_buy() {
 
-        List<Order> orderList =  orderRepository.findAll().collectList().block();
-        int id = orderList.get(orderList.size()-1).getId()+1;
+        List<Order> orderList = orderRepository.findAll().collectList().block();
+        int id = orderList.get(orderList.size() - 1).getId() + 1;
         webClient.post().uri("/orders/buy")
                 .exchange()
                 .expectStatus().is3xxRedirection()
-                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/orders/"+id+"?newOrder=true");
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/orders/" + id + "?newOrder=true");
 
     }
 }

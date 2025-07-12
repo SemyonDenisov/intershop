@@ -5,19 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Item;
@@ -26,10 +19,9 @@ import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @WebFluxTest
 public class ItemControllerUnitTests {
@@ -92,6 +84,6 @@ public class ItemControllerUnitTests {
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .expectHeader().valueEquals(HttpHeaders.LOCATION, "/main/items");
-        verify(itemService,times(1)).addItem(eq("test"), eq("This is a test"), eq(3.0), any());
+        verify(itemService, times(1)).addItem(eq("test"), eq("This is a test"), eq(3.0), any());
     }
 }

@@ -6,11 +6,11 @@ import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Order;
 
-import java.util.List;
-import java.util.Optional;
 
 public interface OrderService {
     Flux<OrderWithItems> findAll();
+
     Mono<OrderWithItems> findById(int id);
+
     Mono<Order> createOrder(Cart cart);
 }

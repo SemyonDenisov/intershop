@@ -7,7 +7,6 @@ import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.*;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Service

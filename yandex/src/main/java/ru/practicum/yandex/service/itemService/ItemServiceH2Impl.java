@@ -1,7 +1,6 @@
 package ru.practicum.yandex.service.itemService;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.http.codec.multipart.FilePart;
@@ -35,12 +34,13 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Flux<Item> findAll(int pageSize,int pageNumber, String title, Sort sort) {
+    public Flux<Item> findAll(int pageSize, int pageNumber, String title, Sort sort) {
         if (title == null || title.isEmpty()) {
             return itemsRepository.findAll(sort).skip((long) pageSize * (pageNumber - 1))
                     .take(pageSize);
-        } else return itemsRepository.findAllByTitleContainingIgnoreCase(title,sort).skip((long) pageSize * (pageNumber - 1))
-                .take(pageSize);
+        } else
+            return itemsRepository.findAllByTitleContainingIgnoreCase(title, sort).skip((long) pageSize * (pageNumber - 1))
+                    .take(pageSize);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Mono<Long> getCount(){
+    public Mono<Long> getCount() {
         return itemsRepository.count();
     }
 }
