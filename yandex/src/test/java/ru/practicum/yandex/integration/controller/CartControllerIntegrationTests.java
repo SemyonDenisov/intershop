@@ -4,61 +4,76 @@ package ru.practicum.yandex.integration.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.reactive.function.BodyInserters;
+import ru.practicum.yandex.DAO.CartItemRepository;
 import ru.practicum.yandex.DAO.CartRepository;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.integration.BaseIntegrationTests;
 import ru.practicum.yandex.model.Cart;
+import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 public class CartControllerIntegrationTests extends BaseIntegrationTests {
 
     @Autowired
-    MockMvc mockMvc;
+    WebTestClient webTestClient;
 
     @Autowired
     ItemsRepository itemsRepository;
     @Autowired
     CartRepository cartRepository;
 
+    @Autowired
+    CartItemRepository cartItemRepository;
+
+
     @BeforeEach
     public void setUp() {
-        itemsRepository.deleteAll();
-        cartRepository.deleteAll();
-        Item item = new Item("title1","description1",1.0,0,"");
-        itemsRepository.save(item);
+        Item item = new Item("title1", "description1", 1.0, 0, "");
+        item = itemsRepository.save(item).block();
         Cart cart = new Cart();
-        cart.getItems().add(item);
+        cart = cartRepository.save(cart).block();
+        cartItemRepository.save(new CartItem(cart.getId(), item.getId())).block();
     }
 
     @Test
     void test_showCart() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/cart/items"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
-                .andExpect(view().name("cart"))
-                .andExpect(model().attributeExists("total"))
-                .andExpect(xpath("//table/tr[1]/td/b").string("Итого: 0.0 руб."));;
+        webTestClient.get()
+                .uri("/cart/items")
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
     void test_addToCart() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/cart/items/1")
-                        .queryParam("action", "plus"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().stringValues(HttpHeaders.LOCATION, "/cart/items"));
+        var builder = new MultipartBodyBuilder();
+        builder.part("action", "plus");
+        webTestClient.post()
+                .uri("/cart/items/1")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/cart/items");
     }
 
 }

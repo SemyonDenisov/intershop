@@ -3,15 +3,22 @@ package ru.practicum.yandex.unit.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.Cart;
+import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.service.cartService.CartService;
+import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
 
 
@@ -22,26 +29,27 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebFluxTest
 public class OrderControllerUnitTests {
     @Autowired
-    MockMvc mockMvc;
+    WebTestClient webClient;
     @MockitoBean
     OrderService orderService;
     @MockitoBean
     CartService cartService;
 
+    @MockitoBean
+    ItemService itemService;
+
     @BeforeEach
-    public void setUp(){
-        reset(orderService,cartService);
+    public void setUp() {
+        reset(orderService, cartService,itemService);
     }
 
     @Test
     void test_getOrders() throws Exception {
-        when(orderService.findAll()).thenReturn(new ArrayList<>());
-        mockMvc.perform(MockMvcRequestBuilders.get("/orders"))
-                .andExpect(status().isOk());
+        when(orderService.findAll()).thenReturn(Flux.just());
+        webClient.get().uri("/orders").exchange().expectStatus().isOk();
     }
 
     @Test
@@ -50,21 +58,21 @@ public class OrderControllerUnitTests {
         orderWithItems.setId(1);
         orderWithItems.setItems(new ArrayList<>());
         orderWithItems.setTotalSum(1.0);
-        when(orderService.findById(1)).thenReturn(Optional.of(orderWithItems));
-        mockMvc.perform(MockMvcRequestBuilders.get("/orders/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"));
+        when(orderService.findById(1)).thenReturn(Mono.just(orderWithItems));
+        webClient.get().uri("/orders/{id}", 1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().valueEquals(HttpHeaders.CONTENT_TYPE, "text/html");
     }
 
     @Test
     void test_buy() throws Exception {
         Cart cart = new Cart();
         cart.setItems(new HashSet<>());
-        when(cartService.getCartById(1)).thenReturn(Optional.of(cart));
-        doNothing().when(orderService).createOrder(cart);
-        mockMvc.perform(MockMvcRequestBuilders.post("/orders/buy"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().stringValues(HttpHeaders.LOCATION, "/orders?newOrder=true"));
-
+        when(cartService.getCartById(1)).thenReturn(Mono.just(cart));
+        when(orderService.createOrder(cart)).thenReturn(Mono.just(new Order()));
+        webClient.post().uri("/orders/buy")
+                .exchange().expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/orders/0?newOrder=true");
     }
 }

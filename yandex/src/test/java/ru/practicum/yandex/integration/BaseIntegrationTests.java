@@ -4,10 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import ru.practicum.yandex.DAO.CartRepository;
-import ru.practicum.yandex.DAO.ItemsRepository;
-import ru.practicum.yandex.DAO.OrderItemRepository;
-import ru.practicum.yandex.DAO.OrderRepository;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.yandex.DAO.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -20,11 +18,16 @@ public class BaseIntegrationTests {
     OrderRepository orderRepository;
     @Autowired
     OrderItemRepository orderItemRepository;
+    @Autowired
+    CartItemRepository cartItemRepository;
+
+    @Transactional
     @BeforeEach
     public void baseSetUp() {
-        cartRepository.deleteAll();
-        orderRepository.deleteAll();
-        orderItemRepository.deleteAll();
-        itemsRepository.deleteAll();
+        cartRepository.deleteAll().block();
+        orderRepository.deleteAll().block();
+        orderItemRepository.deleteAll().block();
+        itemsRepository.deleteAll().block();
+        cartItemRepository.deleteAll().block();
     }
 }

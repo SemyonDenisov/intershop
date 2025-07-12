@@ -1,25 +1,28 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name="order_items")
+
+@Table(name="order_item")
 @NoArgsConstructor
 public class OrderItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(name="order_id")
+    @Getter
+    @Column("order_id")
     int orderId;
     @Getter
-    @Column(name="item_id")
+    @Column("item_id")
     int itemId;
 
     @Getter
-    @Column(name="quantity")
+    @Column("quantity")
     int quantity;
 
     public OrderItem(int orderId, int itemId, int quantity) {

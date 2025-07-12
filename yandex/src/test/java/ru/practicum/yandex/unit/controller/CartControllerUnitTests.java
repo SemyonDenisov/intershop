@@ -3,48 +3,72 @@ package ru.practicum.yandex.unit.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Cart;
+import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
+import ru.practicum.yandex.service.itemService.ItemService;
+import ru.practicum.yandex.service.orderService.OrderService;
 
-import java.util.Optional;
+
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebFluxTest
 public class CartControllerUnitTests {
+
     @Autowired
-    MockMvc mockMvc;
+    private WebTestClient webTestClient;
 
     @MockitoBean
     CartService cartService;
+    @MockitoBean
+    ItemService itemService;
+
+    @MockitoBean
+    OrderService orderService;
 
     @BeforeEach
-    public void setUp(){
-        reset(cartService);
+    public void setUp() {
+        reset(cartService, itemService);
     }
 
     @Test
     void test_showCart() throws Exception {
-        when(cartService.getCartById(1)).thenReturn(Optional.of(new Cart()));
-        mockMvc.perform(MockMvcRequestBuilders.get("/cart/items"))
-                .andExpect(status().isOk());
+        Cart cart = new Cart();
+        Item item = new Item();
+        item.setPrice(3.0);
+        item.setCount(1);
+        cart.setItems(Set.of(item));
+        when(cartService.getCartById(1)).thenReturn(Mono.just(cart));
+        webTestClient.get()
+                .uri("/cart/items")
+                .exchange()
+                .expectStatus().isOk();
     }
 
     @Test
     void test_addCart() throws Exception {
-        doNothing().when(cartService).changeCart(1,"plus");
-        mockMvc.perform(MockMvcRequestBuilders.post("/cart/items/1")
-                        .queryParam("action", "plus"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().stringValues(HttpHeaders.LOCATION, "/cart/items"));
+        var builder = new MultipartBodyBuilder();
+        builder.part("action", "plus");
+        when(cartService.changeCart(1, "plus")).thenReturn(Mono.empty());
+        webTestClient.post()
+                .uri("/cart/items/1")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/cart/items");
+        verify(cartService,times(1)).changeCart(1, "plus");
+
     }
 }

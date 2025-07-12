@@ -1,44 +1,46 @@
 package ru.practicum.yandex.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 
-@Entity
+
 @Table(name="items")
 @NoArgsConstructor
 public class Item {
     @Getter
     @Setter
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     @Setter
     @Getter
-    @Column(name="title")
+    @Column("title")
     String title;
     @Setter
     @Getter
-    @Column(name="description")
+    @Column("description")
     String description;
     @Setter
     @Getter
-    @Column(name="price")
+    @Column("price")
     double price;
     @Setter
     @Getter
-    @Column(name="count")
+    @Column("count")
     int count;
     @Setter
     @Getter
-    @Column(name="img_path")
+    @Column("img_path")
     String imgPath;
 
-    @ManyToMany(mappedBy = "items")
+    @Transient
     Set<Cart> carts;
 
     public Item(String title, String description, double price, int count, String imgPath) {

@@ -1,24 +1,25 @@
 package ru.practicum.yandex.service.itemService;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
+
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+
 import java.util.Objects;
-import java.util.Optional;
+
 import java.util.UUID;
 
 @Service
@@ -34,43 +35,48 @@ public class ItemServiceH2Impl implements ItemService {
     }
 
     @Override
-    public Page<Item> findAll(PageRequest pageable, String title) {
+    public Flux<Item> findAll(int pageSize,int pageNumber, String title, Sort sort) {
         if (title == null || title.isEmpty()) {
-            return itemsRepository.findAll(pageable);
-        } else return itemsRepository.findAllByTitleContainingIgnoreCase(pageable, title);
+            return itemsRepository.findAll(sort).skip((long) pageSize * (pageNumber - 1))
+                    .take(pageSize);
+        } else return itemsRepository.findAllByTitleContainingIgnoreCase(title,sort).skip((long) pageSize * (pageNumber - 1))
+                .take(pageSize);
     }
 
     @Override
-    public Optional<Item> findById(Integer id) {
+    public Mono<Item> findById(Integer id) {
         return itemsRepository.findById(id);
     }
 
     @Override
-    public void addItem(String title, String description, Double price, MultipartFile image) {
+    public Mono<Item> addItem(String title, String description, Double price, Mono<FilePart> imageMono) {
         Item item = new Item();
         item.setTitle(title);
         item.setPrice(price);
         item.setDescription(description);
-        if (image != null) {
-            try {
-                UUID uuid = UUID.randomUUID();
-                String extension;
-                if (image.getName().split("\\.").length == 1) {
-                    extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
-                } else {
-                    extension = Objects.requireNonNull(image.getName()).split("\\.")[1];
-                }
-                String name = uuid + "." + extension;
-                item.setImgPath(name);
-                itemsRepository.save(item);
-                image.transferTo(new File(imagePath + name));
-            } catch (Exception ignored) {
-            }
-        }
+        return imageMono.flatMap(image -> {
+            UUID uuid = UUID.randomUUID();
+            String originalFilename = Objects.requireNonNull(image.filename());
+            String extension = originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf('.') + 1)
+                    : "bin";
+            String name = uuid + "." + extension;
+            item.setImgPath(name);
+            Mono<Void> savedImageMono = image.transferTo(new File(imagePath + name));
+            return savedImageMono.then(itemsRepository.save(item));
+        }).doOnError(throwable -> {
+            System.out.println("file not downloaded");
+            throw new RuntimeException(throwable);
+        });
     }
+
     @Override
-    public byte[] getImage (String filename) throws IOException {
-        byte[] image =  Files.readAllBytes(Path.of(imagePath + filename));
-        return image;
+    public byte[] getImage(String filename) throws IOException {
+        return Files.readAllBytes(Path.of(imagePath + filename));
+    }
+
+    @Override
+    public Mono<Long> getCount(){
+        return itemsRepository.count();
     }
 }
