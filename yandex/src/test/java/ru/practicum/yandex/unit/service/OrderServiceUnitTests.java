@@ -74,7 +74,7 @@ public class OrderServiceUnitTests {
         order.setTotalSum(1.0);
         CartItem cartItem = new CartItem(1,1);
         when(orderRepository.save(any(Order.class))).thenReturn(Mono.just(order));
-        when(cartItemRepository.findByCartId(1)).thenReturn(Flux.just(cartItem));
+        when(cartItemRepository.findByCartId(any(Integer.class))).thenReturn(Flux.just(cartItem));
         when(itemsRepository.save(any(Item.class))).thenReturn(Mono.just(new Item()));
         when(cartRepository.save(any(Cart.class))).thenReturn(Mono.just(new Cart()));
         when(orderItemRepository.save(any(OrderItem.class))).thenReturn(Mono.just(new OrderItem()));
@@ -86,7 +86,7 @@ public class OrderServiceUnitTests {
         items.add(item);
         cart.setItems(items);
         when(itemsRepository.findById(1)).thenReturn(Mono.just(item));
-        orderService.createOrder(cart).subscribe();
+        orderService.createOrder(cart).block();
         verify(orderItemRepository, times(1)).save(any(OrderItem.class));
         verify(itemsRepository, times(1)).save(any(Item.class));
     }
