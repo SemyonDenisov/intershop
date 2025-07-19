@@ -75,7 +75,7 @@ public class OrderServiceH2Impl implements OrderService {
                                                     );
                                                 })
                                 )
-                                .then(paymentService.getBalance())
+                                .then(paymentService.makeOrder(order))
                                 .then(Mono.just(order))
                 );
     }

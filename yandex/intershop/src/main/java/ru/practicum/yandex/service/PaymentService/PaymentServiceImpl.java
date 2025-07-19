@@ -10,6 +10,8 @@ import ru.yandex.payment.client.model.CartPayment200Response;
 import ru.yandex.payment.client.model.CartPaymentRequest;
 import ru.yandex.payment.client.model.GetBalanceById200Response;
 
+import java.util.Objects;
+
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -22,12 +24,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Mono<Double> getBalance() {
         return api
-                .getBalanceById("1").mapNotNull(GetBalanceById200Response::getBalance);
+                .getBalanceById("1").mapNotNull(GetBalanceById200Response::getBalance)
+                .onErrorMap(throwable -> new RuntimeException("payment server not available"));
     }
 
     @Override
     public Mono<CartPayment200Response> makeOrder(Order order) {
-        return api.getBalanceById("1").doOnNext(ans -> System.out.println("111")).then(api.cartPayment(new CartPaymentRequest()));
+        return api.cartPayment(new CartPaymentRequest(1, order.getTotalSum()))
+                .flatMap(answer -> {
+                    if (Objects.equals(answer.getStatus(), "FAILED")) {
+                        return Mono.error(new RuntimeException("not enough money"));
+                    } else {
+                        return Mono.just(answer);
+                    }
+                });
     }
 
 }

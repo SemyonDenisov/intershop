@@ -43,6 +43,7 @@ public class OrderController {
     public Mono<String> buy() {
         return cartService.getCartById(1)
                 .flatMap(orderService::createOrder)
-                .flatMap(order -> Mono.just("redirect:/orders/" + order.getId() + "?newOrder=true"));
+                .flatMap(order -> Mono.just("redirect:/orders/" + order.getId() + "?newOrder=true"))
+                .onErrorResume(error->Mono.just("error"));
     }
 }

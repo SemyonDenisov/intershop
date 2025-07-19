@@ -5,36 +5,24 @@
  */
 package ru.yandex.payment.api;
 
-import ru.yandex.payment.model.CartPayment200Response;
+import ru.yandex.payment.model.CartPaymentResponse;
 import ru.yandex.payment.model.CartPayment400Response;
 import ru.yandex.payment.model.CartPaymentRequest;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import org.springframework.http.codec.multipart.Part;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-19T20:36:16.873307+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
@@ -55,7 +43,7 @@ public interface PaymentApi {
         summary = "Оплата заказа",
         responses = {
             @ApiResponse(responseCode = "200", description = "Платёж успешно выполнен", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = CartPayment200Response.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CartPaymentResponse.class))
             }),
             @ApiResponse(responseCode = "400", description = "Недостаточно средств", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = CartPayment400Response.class))
@@ -70,7 +58,7 @@ public interface PaymentApi {
         consumes = { "application/json" }
     )
     
-    default Mono<ResponseEntity<CartPayment200Response>> cartPayment(
+    default Mono<ResponseEntity<CartPaymentResponse>> cartPayment(
         @Parameter(name = "CartPaymentRequest", description = "", required = true) @Valid @RequestBody Mono<CartPaymentRequest> cartPaymentRequest,
         @Parameter(hidden = true) final ServerWebExchange exchange
     ) {
