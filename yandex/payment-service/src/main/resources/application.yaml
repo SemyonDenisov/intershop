@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  r2dbc:
+  url: r2dbc:h2:mem:///paymentdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE
+  username: sa
+  password:
+  jpa:
+    defer-datasource-initialization: true
+jackson:
+serialization:
+  WRITE_DATES_AS_TIMESTAMPS=false

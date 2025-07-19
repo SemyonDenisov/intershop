@@ -25,9 +25,8 @@ public class CartPayment400Response {
 
   private String status;
 
-  public CartPayment400Response status(String status) {
+  public CartPayment400Response (String status) {
     this.status = status;
-    return this;
   }
 
   /**

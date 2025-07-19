@@ -23,13 +23,13 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-19T20:36:16.873307+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
 public class GetBalanceById200Response {
 
-  private String userId;
+  private Integer userId;
 
   private Double balance;
 
-  public GetBalanceById200Response userId(String userId) {
+  public GetBalanceById200Response (Integer userId,Double balance) {
+    this.balance = balance;
     this.userId = userId;
-    return this;
   }
 
   /**
@@ -39,11 +39,11 @@ public class GetBalanceById200Response {
   
   @Schema(name = "userId", example = "1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("userId")
-  public String getUserId() {
+  public Integer getUserId() {
     return userId;
   }
 
-  public void setUserId(String userId) {
+  public void setUserId(Integer userId) {
     this.userId = userId;
   }
 

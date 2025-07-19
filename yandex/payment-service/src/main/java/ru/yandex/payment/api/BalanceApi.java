@@ -65,7 +65,7 @@ public interface BalanceApi {
     )
     
     default Mono<ResponseEntity<GetBalanceById200Response>> getBalanceById(
-        @Parameter(name = "userId", description = "Идентификатор пользователя", required = true, in = ParameterIn.PATH) @PathVariable("userId") String userId,
+        @Parameter(name = "userId", description = "Идентификатор пользователя", required = true, in = ParameterIn.PATH) @PathVariable("userId") Integer userId,
         @Parameter(hidden = true) final ServerWebExchange exchange
     ) {
         Mono<Void> result = Mono.empty();

@@ -1,18 +1,11 @@
 package ru.yandex.payment.model;
 
-import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
@@ -21,13 +14,18 @@ import jakarta.annotation.Generated;
 
 @JsonTypeName("cartPayment_200_response")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-19T20:36:16.873307+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
-public class CartPayment200Response {
+public class CartPaymentResponse {
 
   private String status;
 
   private Double newBalance;
 
-  public CartPayment200Response status(String status) {
+  public CartPaymentResponse(String status, Double newBalance) {
+    this.status = status;
+    this.newBalance = newBalance;
+  }
+
+  public CartPaymentResponse status(String status) {
     this.status = status;
     return this;
   }
@@ -47,7 +45,7 @@ public class CartPayment200Response {
     this.status = status;
   }
 
-  public CartPayment200Response newBalance(Double newBalance) {
+  public CartPaymentResponse newBalance(Double newBalance) {
     this.newBalance = newBalance;
     return this;
   }
@@ -75,7 +73,7 @@ public class CartPayment200Response {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CartPayment200Response cartPayment200Response = (CartPayment200Response) o;
+    CartPaymentResponse cartPayment200Response = (CartPaymentResponse) o;
     return Objects.equals(this.status, cartPayment200Response.status) &&
         Objects.equals(this.newBalance, cartPayment200Response.newBalance);
   }

@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 public class CartPaymentRequest {
   public static final String JSON_PROPERTY_USER_ID = "userId";
   @jakarta.annotation.Nonnull
-  private String userId;
+  private Integer userId;
 
   public static final String JSON_PROPERTY_AMOUNT = "amount";
   @jakarta.annotation.Nonnull
@@ -44,7 +44,12 @@ public class CartPaymentRequest {
   public CartPaymentRequest() {
   }
 
-  public CartPaymentRequest userId(@jakarta.annotation.Nonnull String userId) {
+  public CartPaymentRequest(Integer userId, Double amount) {
+    this.userId = userId;
+    this.amount = amount;
+  }
+
+  public CartPaymentRequest userId(@jakarta.annotation.Nonnull Integer userId) {
     
     this.userId = userId;
     return this;
@@ -58,14 +63,14 @@ public class CartPaymentRequest {
   @JsonProperty(JSON_PROPERTY_USER_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getUserId() {
+  public Integer getUserId() {
     return userId;
   }
 
 
   @JsonProperty(JSON_PROPERTY_USER_ID)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setUserId(@jakarta.annotation.Nonnull String userId) {
+  public void setUserId(@jakarta.annotation.Nonnull Integer userId) {
     this.userId = userId;
   }
 

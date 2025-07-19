@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-19T20:36:16.873307+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
 public class CartPaymentRequest {
 
-  private String userId;
+  private Integer userId;
 
   private Double amount;
 
@@ -34,12 +34,12 @@ public class CartPaymentRequest {
   /**
    * Constructor with only required parameters
    */
-  public CartPaymentRequest(String userId, Double amount) {
+  public CartPaymentRequest(Integer userId, Double amount) {
     this.userId = userId;
     this.amount = amount;
   }
 
-  public CartPaymentRequest userId(String userId) {
+  public CartPaymentRequest userId(Integer userId) {
     this.userId = userId;
     return this;
   }
@@ -51,11 +51,11 @@ public class CartPaymentRequest {
   @NotNull 
   @Schema(name = "userId", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("userId")
-  public String getUserId() {
+  public Integer getUserId() {
     return userId;
   }
 
-  public void setUserId(String userId) {
+  public void setUserId(Integer userId) {
     this.userId = userId;
   }
 
