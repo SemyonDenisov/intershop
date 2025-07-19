@@ -1,5 +1,6 @@
 package ru.yandex.payment.client.api;
 
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.payment.client.ApiClient;
 
 import ru.yandex.payment.client.model.CartPayment200Response;
@@ -29,6 +30,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-07-18T22:36:48.959781700+04:00[Europe/Samara]", comments = "Generator version: 7.12.0")
+@RestController
 public class DefaultApi {
     private ApiClient apiClient;
 

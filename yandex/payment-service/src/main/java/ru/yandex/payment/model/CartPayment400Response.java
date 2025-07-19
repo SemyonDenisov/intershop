@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("cartPayment_400_response")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-18T22:28:07.231021500+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-07-19T20:36:16.873307+04:00[Europe/Samara]", comments = "Generator version: 7.5.0")
 public class CartPayment400Response {
 
   private String status;
