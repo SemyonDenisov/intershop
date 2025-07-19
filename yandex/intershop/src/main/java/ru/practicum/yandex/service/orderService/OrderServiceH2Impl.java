@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.*;
+import ru.practicum.yandex.service.PaymentService.PaymentService;
 
 import java.util.List;
 
@@ -17,16 +18,20 @@ public class OrderServiceH2Impl implements OrderService {
     private final ItemsRepository itemsRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
+    private final PaymentService paymentService;
 
     public OrderServiceH2Impl(OrderRepository orderRepository,
                               CartRepository cartRepository,
                               ItemsRepository itemsRepository,
-                              OrderItemRepository orderItemRepository, CartItemRepository cartItemRepository) {
+                              OrderItemRepository orderItemRepository,
+                              CartItemRepository cartItemRepository,
+                              PaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartItemRepository = cartItemRepository;
+        this.paymentService = paymentService;
     }
 
 
@@ -70,6 +75,7 @@ public class OrderServiceH2Impl implements OrderService {
                                                     );
                                                 })
                                 )
+                                .then(paymentService.getBalance())
                                 .then(Mono.just(order))
                 );
     }

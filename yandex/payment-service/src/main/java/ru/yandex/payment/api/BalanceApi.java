@@ -69,7 +69,7 @@ public interface BalanceApi {
         @Parameter(hidden = true) final ServerWebExchange exchange
     ) {
         Mono<Void> result = Mono.empty();
-        exchange.getResponse().setStatusCode(HttpStatus.NOT_IMPLEMENTED);
+        exchange.getResponse().setStatusCode(HttpStatus.OK);
         for (MediaType mediaType : exchange.getRequest().getHeaders().getAccept()) {
             if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                 String exampleString = "{ \"balance\" : 1500.5, \"userId\" : \"1\" }";
