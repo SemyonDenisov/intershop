@@ -1,0 +1,24 @@
+logging:
+  level:
+    web: debug
+
+spring:
+  application:
+    name=yandex
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+  jpa:
+    defer-datasource-initialization: true
+  image:
+    savePath: E:\Yandex\intershop\yandex\intershop\storage\images\
+  servlet:
+    multipart:
+      file-size-threshold: 1048576
+      max-file-size: 20848820
+      max-request-size: 418018841
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379

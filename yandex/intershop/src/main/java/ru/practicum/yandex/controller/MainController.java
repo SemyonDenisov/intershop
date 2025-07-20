@@ -39,15 +39,8 @@ public class MainController {
                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                               @RequestParam(name = "pageNumber", defaultValue = "1") Integer pageNumber,
                               @RequestParam(name = "sort", defaultValue = "NO") String sort) {
-        Sort sortForRequest;
-        switch (sort) {
-            case "AlPHA" -> sortForRequest = Sort.by(Sort.Direction.ASC, "title");
-            case "PRICE" -> sortForRequest = Sort.by(Sort.Direction.ASC, "price");
-            default -> sortForRequest = Sort.by(Sort.Direction.DESC, "id");
-        }
 
-
-        Flux<Item> items = itemService.findAll(pageSize,pageNumber, search, sortForRequest);
+        Flux<Item> items = itemService.findAll(pageSize,pageNumber, search, sort);
         Mono<Long> totalItems = itemService.getCount();
         return items.collectList().zipWith(totalItems).flatMap(tuple -> {
             List<Item> items1 = tuple.getT1();

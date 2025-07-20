@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.List;
 import java.util.Objects;
 
 import java.util.UUID;
@@ -29,23 +31,63 @@ public class ItemServiceH2Impl implements ItemService {
 
     private final ItemsRepository itemsRepository;
 
-    ItemServiceH2Impl(ItemsRepository itemsRepository) {
+    private final ItemCacheService itemCacheService;
+
+    ItemServiceH2Impl(ItemsRepository itemsRepository,
+                      ItemCacheService itemCacheService) {
         this.itemsRepository = itemsRepository;
+        this.itemCacheService = itemCacheService;
     }
 
     @Override
-    public Flux<Item> findAll(int pageSize, int pageNumber, String title, Sort sort) {
+    public Flux<Item> findAll(int pageSize, int pageNumber, String title, String sort) {
+        List<Item> cachedItems = itemCacheService.getAllItems((pageNumber - 1) * pageSize, pageSize, sort, title);
+        if (cachedItems != null && !cachedItems.isEmpty()) {
+            return Flux.fromIterable(cachedItems);
+        }
+
+        Sort sortForRequest;
+        switch (sort) {
+            case "AlPHA" -> sortForRequest = Sort.by(Sort.Direction.ASC, "title");
+            case "PRICE" -> sortForRequest = Sort.by(Sort.Direction.ASC, "price");
+            default -> sortForRequest = Sort.by(Sort.Direction.DESC, "id");
+        }
         if (title == null || title.isEmpty()) {
-            return itemsRepository.findAll(sort).skip((long) pageSize * (pageNumber - 1))
+            return itemsRepository.findAll(sortForRequest).collectList()
+                    .map(items ->
+                            {
+                                itemCacheService.cacheItems(items, sort, title, (pageNumber - 1) * pageSize, pageSize);
+                                return items;
+                            }
+                    )
+                    .flatMapMany(Flux::fromIterable)
+                    .skip((long) pageSize * (pageNumber - 1))
                     .take(pageSize);
-        } else
-            return itemsRepository.findAllByTitleContainingIgnoreCase(title, sort).skip((long) pageSize * (pageNumber - 1))
+        } else {
+            return itemsRepository.findAllByTitleContainingIgnoreCase(title, sortForRequest)
+                    .collectList()
+                    .map(items ->
+                            {
+                                System.out.println("in db");
+                                itemCacheService.cacheItems(items, sort, title, (pageNumber - 1) * pageSize, pageSize);
+                                return items;
+                            }
+                    )
+                    .flatMapMany(Flux::fromIterable).skip((long) pageSize * (pageNumber - 1))
                     .take(pageSize);
+        }
     }
 
     @Override
     public Mono<Item> findById(Integer id) {
-        return itemsRepository.findById(id);
+        Item item = itemCacheService.getItem(id);
+        Mono<Item> itemMono = Mono.justOrEmpty(item);
+        if (item == null) {
+            itemMono = itemsRepository
+                    .findById(id)
+                    .doOnNext(item1 -> itemCacheService.cacheItem(item1, false));
+        }
+        return itemMono;
     }
 
     @Override
@@ -63,7 +105,9 @@ public class ItemServiceH2Impl implements ItemService {
             String name = uuid + "." + extension;
             item.setImgPath(name);
             Mono<Void> savedImageMono = image.transferTo(new File(imagePath + name));
-            return savedImageMono.then(itemsRepository.save(item));
+            itemCacheService.cacheItem(item, true);
+            return savedImageMono
+                    .then(itemsRepository.save(item));
         }).doOnError(throwable -> {
             System.out.println("file not downloaded");
             throw new RuntimeException(throwable);

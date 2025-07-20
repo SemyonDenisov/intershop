@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Недостаточно средств</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fdfdfd;
+            text-align: center;
+            padding: 100px;
+        }
+
+        h1 {
+            color: #d9534f;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #0275d8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background-color: #025aa5;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Недостаточно средств</h1>
+<p>У вас недостаточно средств для оформления заказа.</p>
+
+<a th:href="@{/main/items}">Вернуться на главную страницу</a>
+
+</body>
+</html>

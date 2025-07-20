@@ -51,8 +51,11 @@
     </tr>
     <tr>
         <td style="text-align:right">
-            <form action="/orders/buy" method="post"  th:if="${!empty}">
-                <button>Купить</button>
+            <div th:if="${!serverAvailable}" style="background-color:#ffdddd;border-left:6px solid #f44336;padding:10px;margin-bottom:15px;">
+                ⚠️ Сервер временно недоступен. Пожалуйста, попробуйте позже.
+            </div>
+            <form action="/orders/buy" method="post" th:if="${!empty}">
+                <button th:disabled="${!availableToBuy or !serverAvailable}">Купить</button>
             </form>
         </td>
     </tr>
