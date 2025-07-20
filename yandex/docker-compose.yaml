@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - yandex-net
+
+  intershop-app:
+    build:
+      context: ./intershop
+    container_name: intershop-app
+    ports:
+      - "8080:8080"
+    environment:
+      STORAGE_IMAGE_PATH: /var/lib/storage/images/
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      PAYMENT_SERVICE_NAME: payment-service
+      PAYMENT_SERVICE_PORT: 8081
+    depends_on:
+      - redis
+    networks:
+      - yandex-net
+
+  payment-service:
+    build:
+      context: ./payment-service
+    container_name: payment-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - redis
+    networks:
+      - yandex-net
+
+networks:
+  yandex-net:
+    driver: bridge

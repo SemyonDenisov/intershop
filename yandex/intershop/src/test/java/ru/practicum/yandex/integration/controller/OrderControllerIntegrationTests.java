@@ -8,15 +8,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.integration.BaseIntegrationControllerTests;
-import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.model.Order;
+import ru.yandex.payment.client.model.CartPayment200Response;
 
 
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -34,6 +38,8 @@ public class OrderControllerIntegrationTests extends BaseIntegrationControllerTe
         Cart cart = new Cart();
         cart = cartRepository.save(cart).block();
         cartItemRepository.save(new CartItem(cart.getId(), item.getId())).block();
+        CartPayment200Response cr = new CartPayment200Response();
+        when(paymentService.makeOrder(any())).thenReturn(Mono.just(cr));
         Order order = orderService.createOrder(cart).block();
     }
 

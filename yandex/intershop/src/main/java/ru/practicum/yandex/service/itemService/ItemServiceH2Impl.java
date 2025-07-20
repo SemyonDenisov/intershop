@@ -68,7 +68,6 @@ public class ItemServiceH2Impl implements ItemService {
                     .collectList()
                     .map(items ->
                             {
-                                System.out.println("in db");
                                 itemCacheService.cacheItems(items, sort, title, (pageNumber - 1) * pageSize, pageSize);
                                 return items;
                             }

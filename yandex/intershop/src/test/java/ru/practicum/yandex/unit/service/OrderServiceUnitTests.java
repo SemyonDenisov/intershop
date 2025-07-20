@@ -12,6 +12,7 @@ import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.model.*;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 import ru.practicum.yandex.service.orderService.OrderService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 
 import java.util.*;
 
@@ -34,10 +35,13 @@ public class OrderServiceUnitTests {
     private CartItemRepository cartItemRepository;
     @MockitoBean
     private ItemCacheService itemCacheService;
+    @MockitoBean
+    private PaymentService paymentService;
 
     @BeforeEach
     public void setUp() {
-        reset(orderRepository, orderItemRepository, cartRepository);
+
+        reset(orderRepository, orderItemRepository, cartRepository,paymentService);
     }
 
     @Test
@@ -81,6 +85,7 @@ public class OrderServiceUnitTests {
         when(cartRepository.save(any(Cart.class))).thenReturn(Mono.just(new Cart()));
         when(orderItemRepository.save(any(OrderItem.class))).thenReturn(Mono.just(new OrderItem()));
         when(cartItemRepository.deleteByItemId(1)).thenReturn(Mono.empty());
+        when(paymentService.makeOrder(any())).thenReturn(Mono.empty());
         Cart cart = new Cart();
         Set<Item> items = new HashSet<>();
         Item item = new Item();

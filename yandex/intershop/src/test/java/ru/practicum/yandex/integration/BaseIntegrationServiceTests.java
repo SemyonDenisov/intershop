@@ -7,12 +7,16 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.EmbeddedRedisConfiguration;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
+
+import static org.mockito.Mockito.reset;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -36,6 +40,9 @@ public class BaseIntegrationServiceTests {
     @Autowired
     protected ItemService itemService;
 
+    @MockitoBean
+    protected PaymentService paymentService;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -48,5 +55,6 @@ public class BaseIntegrationServiceTests {
         orderItemRepository.deleteAll().block();
         itemsRepository.deleteAll().block();
         cartItemRepository.deleteAll().block();
+        reset(paymentService);
     }
 }

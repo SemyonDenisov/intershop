@@ -41,7 +41,7 @@ public class OrderControllerUnitTests {
 
     @BeforeEach
     public void setUp() {
-        reset(orderService, cartService, itemService);
+        reset(orderService, cartService, itemService,paymentService);
     }
 
     @Test

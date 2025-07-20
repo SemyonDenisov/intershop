@@ -1,2 +1,2 @@
-server:
-  port: 8088
+payment-service-name: localhost
+payment-service-port: 8081

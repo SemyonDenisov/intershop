@@ -38,7 +38,6 @@ public class CartController {
                                         model.addAttribute("serverAvailable", true);
                                     }
                                     model.addAttribute("availableToBuy", balance >= cart.getTotal());
-
                                     model.addAttribute("items", cart.getItems());
                                     model.addAttribute("empty", cart.getItems().isEmpty());
                                     model.addAttribute("total", cart.getTotal());

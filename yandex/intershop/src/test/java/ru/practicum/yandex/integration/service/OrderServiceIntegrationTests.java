@@ -3,8 +3,10 @@ package ru.practicum.yandex.integration.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
@@ -16,6 +18,7 @@ import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 
 @ActiveProfiles("test")
@@ -32,7 +35,6 @@ public class OrderServiceIntegrationTests extends BaseIntegrationServiceTests {
         orderRepository.save(new Order(4.0)).block();
         cartItemRepository.save(new CartItem(cart.getId(), it1.getId())).block();
         cartItemRepository.save(new CartItem(cart.getId(), it2.getId())).block();
-
     }
 
     @Test
@@ -49,6 +51,7 @@ public class OrderServiceIntegrationTests extends BaseIntegrationServiceTests {
 
     @Test
     void test_createOrder() {
+        Mockito.when(paymentService.makeOrder(any())).thenReturn(Mono.empty());
         Cart cart = cartRepository.findById(cartRepository.findAll().collectList().block().get(0).getId()).block();
         orderService.createOrder(cart).block();
         assertEquals(3, orderRepository.findAll().collectList().block().size());
