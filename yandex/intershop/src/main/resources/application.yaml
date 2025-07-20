@@ -8,9 +8,13 @@ spring:
   jpa:
     defer-datasource-initialization: true
   image:
-    savePath: /var/lib/storage/images/
+    savePath: E:\Yandex\intershop\yandex\intershop\storage\images\ #/var/lib/storage/images/
   servlet:
     multipart:
       file-size-threshold: 1048576
       max-file-size: 20848820
       max-request-size: 418018841
+  data:
+    redis:
+      host: localhost
+      port: 6379

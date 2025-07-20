@@ -8,6 +8,7 @@ import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,11 +20,16 @@ public class CartServiceH2Impl implements CartService {
     private final ItemsRepository itemsRepository;
     private final CartItemRepository cartItemRepository;
 
+    private final ItemCacheService itemCacheService;
+
     public CartServiceH2Impl(CartRepository cartRepository,
-                             ItemsRepository itemsRepository, CartItemRepository cartItemRepository) {
+                             ItemsRepository itemsRepository,
+                             CartItemRepository cartItemRepository,
+                             ItemCacheService itemCacheService) {
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
         this.cartItemRepository = cartItemRepository;
+        this.itemCacheService = itemCacheService;
     }
 
     @Override
@@ -50,16 +56,19 @@ public class CartServiceH2Impl implements CartService {
                     switch (action.toUpperCase()) {
                         case "PLUS" -> {
                             item.setCount(item.getCount() + 1);
+                            itemCacheService.cacheItem(item, true);
                             return itemsRepository.save(item);
                         }
                         case "MINUS" -> {
                             if (item.getCount() > 0) {
                                 item.setCount(item.getCount() - 1);
+                                itemCacheService.cacheItem(item, true);
                                 return itemsRepository.save(item);
                             }
                         }
                         case "DELETE" -> {
                             item.setCount(0);
+                            itemCacheService.cacheItem(item, true);
                             return itemsRepository.save(item).zipWith(cartItemRepository.deleteByItemId(item.getId()));
                         }
                     }

@@ -7,6 +7,7 @@ import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.*;
 import ru.practicum.yandex.service.PaymentService.PaymentService;
+import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 
 import java.util.List;
 
@@ -19,19 +20,22 @@ public class OrderServiceH2Impl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
     private final PaymentService paymentService;
+    private final ItemCacheService itemCacheService;
 
     public OrderServiceH2Impl(OrderRepository orderRepository,
                               CartRepository cartRepository,
                               ItemsRepository itemsRepository,
                               OrderItemRepository orderItemRepository,
                               CartItemRepository cartItemRepository,
-                              PaymentService paymentService) {
+                              PaymentService paymentService,
+                              ItemCacheService itemCacheService) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartItemRepository = cartItemRepository;
         this.paymentService = paymentService;
+        this.itemCacheService = itemCacheService;
     }
 
 
@@ -76,6 +80,7 @@ public class OrderServiceH2Impl implements OrderService {
                                                 })
                                 )
                                 .then(paymentService.makeOrder(order))
+                                .doOnNext(orderMake -> itemCacheService.deleteLists())
                                 .then(Mono.just(order))
                 );
     }

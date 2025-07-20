@@ -6,4 +6,4 @@ create table if not exists balance(
                                     );
 
 
-insert into balance(user_id,amount) values (1,7);
+insert into balance(user_id,amount) values (1,20);
