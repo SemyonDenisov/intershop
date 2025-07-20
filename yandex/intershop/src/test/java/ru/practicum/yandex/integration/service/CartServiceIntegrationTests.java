@@ -3,36 +3,20 @@ package ru.practicum.yandex.integration.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.yandex.DAO.CartItemRepository;
-import ru.practicum.yandex.DAO.CartRepository;
-import ru.practicum.yandex.DAO.ItemsRepository;
-import ru.practicum.yandex.integration.BaseIntegrationTests;
+import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
-import ru.practicum.yandex.service.cartService.CartService;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("test")
 @SpringBootTest
-public class CartServiceIntegrationTests extends BaseIntegrationTests {
-    @Autowired
-    private CartService cartService;
-
-    @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private ItemsRepository itemsRepository;
-
-    @Autowired
-    private CartItemRepository cartItemRepository;
+public class CartServiceIntegrationTests extends BaseIntegrationServiceTests {
 
     @BeforeEach
     @Transactional

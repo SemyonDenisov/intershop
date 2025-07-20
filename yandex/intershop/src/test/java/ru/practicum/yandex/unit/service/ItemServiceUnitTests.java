@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.paymentService.PaymentService;
 
@@ -28,6 +29,9 @@ public class ItemServiceUnitTests {
 
     @MockitoBean
     private PaymentService paymentService;
+
+    @MockitoBean
+    private ItemCacheService itemCacheService;
 
     @Autowired
     private ItemService itemService;

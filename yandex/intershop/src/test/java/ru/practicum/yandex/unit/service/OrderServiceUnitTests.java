@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.model.*;
+import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 import ru.practicum.yandex.service.orderService.OrderService;
 
 import java.util.*;
@@ -31,6 +32,8 @@ public class OrderServiceUnitTests {
     private ItemsRepository itemsRepository;
     @MockitoBean
     private CartItemRepository cartItemRepository;
+    @MockitoBean
+    private ItemCacheService itemCacheService;
 
     @BeforeEach
     public void setUp() {

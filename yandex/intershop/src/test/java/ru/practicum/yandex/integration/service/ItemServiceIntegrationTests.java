@@ -3,16 +3,12 @@ package ru.practicum.yandex.integration.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DAO.ItemsRepository;
-import ru.practicum.yandex.integration.BaseIntegrationTests;
+import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Item;
-import ru.practicum.yandex.service.itemService.ItemService;
 
 
 import java.io.File;
@@ -26,11 +22,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class ItemServiceIntegrationTests extends BaseIntegrationTests {
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private ItemsRepository itemsRepository;
+public class ItemServiceIntegrationTests extends BaseIntegrationServiceTests {
 
     @BeforeEach
     public void setUp() {

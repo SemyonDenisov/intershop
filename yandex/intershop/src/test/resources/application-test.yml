@@ -12,7 +12,7 @@ spring:
   jpa:
     defer-datasource-initialization: true
   image:
-    savePath: E:\Yandex\intershop\yandex\storage\images\
+    savePath: E:\Yandex\intershop\yandex\intershop\storage\images\
   servlet:
     multipart:
       file-size-threshold: 1048576

@@ -6,36 +6,31 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import ru.practicum.yandex.DAO.CartItemRepository;
-import ru.practicum.yandex.DAO.CartRepository;
-import ru.practicum.yandex.DAO.ItemsRepository;
-import ru.practicum.yandex.integration.BaseIntegrationTests;
+import ru.practicum.yandex.integration.BaseIntegrationControllerTests;
+import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-public class CartControllerIntegrationTests extends BaseIntegrationTests {
+public class CartControllerIntegrationTests extends BaseIntegrationControllerTests {
 
     @Autowired
-    WebTestClient webTestClient;
-
-    @Autowired
-    ItemsRepository itemsRepository;
-    @Autowired
-    CartRepository cartRepository;
-
-    @Autowired
-    CartItemRepository cartItemRepository;
+    private RedisTemplate<String, Object> redisTemplate;
 
 
     @BeforeEach
@@ -48,7 +43,7 @@ public class CartControllerIntegrationTests extends BaseIntegrationTests {
     }
 
     @Test
-    void test_showCart() throws Exception {
+    void test_showCart() {
         webTestClient.get()
                 .uri("/cart/items")
                 .exchange()
@@ -56,16 +51,19 @@ public class CartControllerIntegrationTests extends BaseIntegrationTests {
     }
 
     @Test
-    void test_addToCart() throws Exception {
+    void test_addToCart() {
         var builder = new MultipartBodyBuilder();
         builder.part("action", "plus");
+        List<Item> items = itemsRepository.findAll().collectList().block();
+        int lastId = items.get(items.size() - 1).getId();
         webTestClient.post()
-                .uri("/cart/items/1")
+                .uri("/cart/items/" + lastId)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .expectHeader().valueEquals(HttpHeaders.LOCATION, "/cart/items");
+        assertThat(redisTemplate.opsForValue().get("item:" + lastId) instanceof Item).isTrue();
     }
 
 }

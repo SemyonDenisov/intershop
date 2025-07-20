@@ -8,14 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import ru.practicum.yandex.DAO.*;
-import ru.practicum.yandex.integration.BaseIntegrationTests;
+import ru.practicum.yandex.integration.BaseIntegrationControllerTests;
+import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.model.Order;
-import ru.practicum.yandex.service.cartService.CartService;
-import ru.practicum.yandex.service.orderService.OrderService;
 
 
 import java.util.List;
@@ -24,27 +22,9 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-public class OrderControllerIntegrationTests extends BaseIntegrationTests {
+public class OrderControllerIntegrationTests extends BaseIntegrationControllerTests {
     @Autowired
     WebTestClient webClient;
-
-    @Autowired
-    ItemsRepository itemsRepository;
-    @Autowired
-    CartRepository cartRepository;
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    OrderService orderService;
-    @Autowired
-    CartService cartService;
-
-    @Autowired
-    OrderItemRepository orderItemRepository;
-
-    @Autowired
-    CartItemRepository cartItemRepository;
 
 
     @BeforeEach
@@ -72,7 +52,6 @@ public class OrderControllerIntegrationTests extends BaseIntegrationTests {
 
     @Test
     void test_buy() {
-
         List<Order> orderList = orderRepository.findAll().collectList().block();
         int id = orderList.get(orderList.size() - 1).getId() + 1;
         webClient.post().uri("/orders/buy")
