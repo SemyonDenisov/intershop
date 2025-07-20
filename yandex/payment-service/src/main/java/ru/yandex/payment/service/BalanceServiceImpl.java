@@ -1,6 +1,5 @@
 package ru.yandex.payment.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.yandex.payment.dao.BalanceRepository;
@@ -12,7 +11,6 @@ import ru.yandex.payment.model.CartPaymentResponse;
 @Service
 public class BalanceServiceImpl implements BalanceService {
 
-    @Autowired
     BalanceRepository balanceRepository;
 
     public BalanceServiceImpl(BalanceRepository balanceRepository) {

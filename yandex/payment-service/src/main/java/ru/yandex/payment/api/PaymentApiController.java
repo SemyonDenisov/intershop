@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.yandex.payment.model.CartPaymentResponse;
-import ru.yandex.payment.model.CartPayment400Response;
 import ru.yandex.payment.model.CartPaymentRequest;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -28,7 +26,6 @@ import static ru.yandex.payment.model.Action.MINUS;
 @RestController
 public class PaymentApiController implements PaymentApi {
 
-    @Autowired
     private final BalanceService balanceService;
 
     public PaymentApiController(BalanceService balanceService) {
@@ -52,7 +49,7 @@ public class PaymentApiController implements PaymentApi {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = CartPaymentResponse.class))
                     }),
                     @ApiResponse(responseCode = "400", description = "Недостаточно средств", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = CartPayment400Response.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = CartPaymentResponse.class))
                     }),
                     @ApiResponse(responseCode = "404", description = "Пользователь не найден")
             }
@@ -67,20 +64,6 @@ public class PaymentApiController implements PaymentApi {
             @Parameter(name = "CartPaymentRequest", description = "", required = true) @Valid @RequestBody Mono<CartPaymentRequest> cartPaymentRequest,
             @Parameter(hidden = true) final ServerWebExchange exchange
     ) {
-        exchange.getResponse().setStatusCode(HttpStatus.NOT_IMPLEMENTED);
-//        for (MediaType mediaType : exchange.getRequest().getHeaders().getAccept()) {
-//            if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-//                String exampleString = "{ \"newBalance\" : 1000.5, \"status\" : \"SUCCESS\" }";
-//                result = ApiUtil.getExampleResponse(exchange, MediaType.valueOf("application/json"), exampleString);
-//                break;
-//            }
-//            if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-//                String exampleString = "{ \"status\" : \"FAILED\" }";
-//                result = ApiUtil.getExampleResponse(exchange, MediaType.valueOf("application/json"), exampleString);
-//                break;
-//            }
-//        }
-
         return cartPaymentRequest
                 .flatMap(cr -> balanceService.changeBalance(cr.getUserId(), cr.getAmount(), MINUS))
                 .map(ResponseEntity::ok)

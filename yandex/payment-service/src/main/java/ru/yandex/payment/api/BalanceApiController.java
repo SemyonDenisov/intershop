@@ -5,28 +5,18 @@
  */
 package ru.yandex.payment.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import ru.yandex.payment.model.GetBalanceById200Response;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import ru.yandex.payment.model.GetBalanceByIdResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -39,10 +29,11 @@ import ru.yandex.payment.service.BalanceService;
 @RestController
 public class BalanceApiController implements BalanceApi {
 
-    @Autowired
-    BalanceService balanceService;
+
+    private final BalanceService balanceService;
 
     public BalanceApiController(BalanceService balanceService) {
+
         this.balanceService = balanceService;
     }
 
@@ -59,7 +50,7 @@ public class BalanceApiController implements BalanceApi {
             summary = "Получение баланса",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Успешный ответ", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = GetBalanceById200Response.class))
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = GetBalanceByIdResponse.class))
                     }),
                     @ApiResponse(responseCode = "404", description = "Пользователь не найден")
             }
@@ -69,22 +60,10 @@ public class BalanceApiController implements BalanceApi {
             value = "/balance/{userId}",
             produces = {"application/json"}
     )
-    public Mono<ResponseEntity<GetBalanceById200Response>> getBalanceById(
+    public Mono<ResponseEntity<GetBalanceByIdResponse>> getBalanceById(
             @Parameter(name = "userId", description = "Идентификатор пользователя", required = true, in = ParameterIn.PATH) @PathVariable("userId") Integer userId,
             @Parameter(hidden = true) final ServerWebExchange exchange
     ) {
-
-        Mono<Void> result = Mono.empty();
-       // exchange.getResponse().setStatusCode(HttpStatus.OK);
-//        for (MediaType mediaType : exchange.getRequest().getHeaders().getAccept()) {
-//            if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-//                String exampleString = "{ \"balance\" : 1500.5, \"userId\" : \"1\" }";
-//                result = ApiUtil.getExampleResponse(exchange, MediaType.valueOf("application/json"), exampleString);
-//                break;
-//            }
-//        }
-        return balanceService.getBalanceByUserId(userId).map(amount->ResponseEntity.ok(new GetBalanceById200Response(userId,amount)));
-
+        return balanceService.getBalanceByUserId(userId).map(amount -> ResponseEntity.ok(new GetBalanceByIdResponse(userId, amount)));
     }
-
 }
