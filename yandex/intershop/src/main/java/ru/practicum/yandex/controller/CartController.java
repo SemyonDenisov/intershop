@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.service.PaymentService.PaymentService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 import ru.practicum.yandex.service.cartService.CartService;
 
 

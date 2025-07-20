@@ -69,7 +69,7 @@ public class ItemServiceIntegrationTests extends BaseIntegrationTests {
 
     @Test
     public void test_findAll() {
-        List<Item> items = itemService.findAll(3, 1, "t", Sort.by(Sort.Direction.DESC, "id")).collectList().block();
+        List<Item> items = itemService.findAll(3, 1, "t", "NO").collectList().block();
         assertEquals(3, items.size());
     }
 

@@ -15,6 +15,7 @@ import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class OrderControllerUnitTests {
 
     @MockitoBean
     ItemService itemService;
+
+    @MockitoBean
+    PaymentService paymentService;
 
     @BeforeEach
     public void setUp() {

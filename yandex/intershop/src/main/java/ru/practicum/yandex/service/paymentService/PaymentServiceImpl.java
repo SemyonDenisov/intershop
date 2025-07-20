@@ -1,7 +1,6 @@
-package ru.practicum.yandex.service.PaymentService;
+package ru.practicum.yandex.service.paymentService;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Order;
@@ -17,8 +16,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     DefaultApi api;
 
-    public PaymentServiceImpl() {
-        this.api = new DefaultApi();
+    public PaymentServiceImpl(DefaultApi api) {
+        this.api = api;
     }
 
     @Override

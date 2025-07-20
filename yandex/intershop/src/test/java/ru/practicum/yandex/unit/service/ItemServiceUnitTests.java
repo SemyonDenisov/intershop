@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.ItemsRepository;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.itemService.ItemService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 
 import java.io.File;
 
@@ -24,6 +25,9 @@ import static org.mockito.Mockito.*;
 public class ItemServiceUnitTests {
     @MockitoBean
     private ItemsRepository itemsRepository;
+
+    @MockitoBean
+    private PaymentService paymentService;
 
     @Autowired
     private ItemService itemService;
@@ -54,9 +58,9 @@ public class ItemServiceUnitTests {
 
     @Test
     public void test_findAll() {
-        Sort sort = Sort.by(Sort.Direction.ASC, "title");
-        when(itemsRepository.findAllByTitleContainingIgnoreCase("1", sort)).thenReturn(Flux.just(new Item()));
-        itemService.findAll(0, 1, "1", sort).collectList().block();
-        verify(itemsRepository, times(1)).findAllByTitleContainingIgnoreCase("1", sort);
+        when(itemsRepository.findAllByTitleContainingIgnoreCase(eq("1"), any())).thenReturn(Flux.just(new Item()));
+        itemService.findAll(0, 1, "1", "NO").collectList().block();
+        verify(itemsRepository, times(1))
+                .findAllByTitleContainingIgnoreCase(eq("1"), any());
     }
 }

@@ -15,6 +15,7 @@ import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 
 
 import static org.mockito.Mockito.*;
@@ -32,6 +33,9 @@ public class CartServiceUnitTests {
 
     @MockitoBean
     private ItemsRepository itemsRepository;
+
+    @MockitoBean
+    private PaymentService paymentService;
 
     @BeforeEach
     public void setUp() {

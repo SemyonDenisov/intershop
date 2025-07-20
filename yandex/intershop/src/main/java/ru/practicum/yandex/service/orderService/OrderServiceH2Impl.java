@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 import ru.practicum.yandex.DAO.*;
 import ru.practicum.yandex.DTO.OrderWithItems;
 import ru.practicum.yandex.model.*;
-import ru.practicum.yandex.service.PaymentService.PaymentService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 
 import java.util.List;

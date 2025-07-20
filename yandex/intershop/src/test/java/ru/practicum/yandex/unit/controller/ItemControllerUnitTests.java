@@ -17,6 +17,7 @@ import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
+import ru.practicum.yandex.service.paymentService.PaymentService;
 
 import java.nio.charset.StandardCharsets;
 
@@ -34,6 +35,8 @@ public class ItemControllerUnitTests {
     ItemService itemService;
     @MockitoBean
     OrderService orderService;
+    @MockitoBean
+    PaymentService paymentService;
 
     @BeforeEach
     public void setUp() {
