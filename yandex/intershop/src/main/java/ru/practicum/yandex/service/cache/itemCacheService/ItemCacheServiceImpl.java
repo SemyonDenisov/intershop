@@ -65,7 +65,7 @@ public class ItemCacheServiceImpl implements ItemCacheService {
         redisTemplate.opsForValue().set("items:" + sort.toLowerCase() + ":"
                 + search.toLowerCase() + ":"
                 + skip +
-                ":" + limit + ":list", items);
+                ":" + limit + ":list", items,TTL);
     }
 
     @Override

@@ -8,7 +8,7 @@ spring:
   jpa:
     defer-datasource-initialization: true
   image:
-    savePath: ${STORAGE_IMAGE_PATH:/var/lib/storage/images}
+    savePath: ${STORAGE_IMAGE_PATH:E:\Yandex\intershop\yandex\intershop\storage\images\}
   servlet:
     multipart:
       file-size-threshold: 1048576
@@ -18,5 +18,5 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
       port: ${SPRING_REDIS_PORT:6379}
-payment-service-name: localhost
-payment-service-port: 8081
+payment-service-name: ${PAYMENT_SERVICE_NAME:localhost}
+payment-service-port: ${PAYMENT_SERVICE_PORT:8081}

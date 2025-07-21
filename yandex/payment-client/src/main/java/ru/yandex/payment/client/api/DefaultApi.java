@@ -34,8 +34,8 @@ import reactor.core.publisher.Flux;
 public class DefaultApi {
     private ApiClient apiClient;
 
-    public DefaultApi() {
-        this(new ApiClient());
+    public DefaultApi(String paymentServiceName, int paymentServicePort) {
+        this(new ApiClient(paymentServiceName, paymentServicePort));
     }
 
     @Autowired
@@ -51,13 +51,14 @@ public class DefaultApi {
         this.apiClient = apiClient;
     }
 
-    
+
     /**
      * Оплата заказа
-     * 
+     *
      * <p><b>200</b> - Платёж успешно выполнен
      * <p><b>400</b> - Недостаточно средств
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param cartPaymentRequest The cartPaymentRequest parameter
      * @return CartPayment200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -76,57 +77,63 @@ public class DefaultApi {
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = { 
-            "application/json"
+        final String[] localVarAccepts = {
+                "application/json"
         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { 
-            "application/json"
+        final String[] localVarContentTypes = {
+                "application/json"
         };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[]{};
 
-        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {};
+        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {
+        };
         return apiClient.invokeAPI("/payment", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
      * Оплата заказа
-     * 
+     *
      * <p><b>200</b> - Платёж успешно выполнен
      * <p><b>400</b> - Недостаточно средств
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param cartPaymentRequest The cartPaymentRequest parameter
      * @return CartPayment200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     public Mono<CartPayment200Response> cartPayment(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {};
+        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {
+        };
         return cartPaymentRequestCreation(cartPaymentRequest).bodyToMono(localVarReturnType);
     }
 
     /**
      * Оплата заказа
-     * 
+     *
      * <p><b>200</b> - Платёж успешно выполнен
      * <p><b>400</b> - Недостаточно средств
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param cartPaymentRequest The cartPaymentRequest parameter
      * @return ResponseEntity&lt;CartPayment200Response&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     public Mono<ResponseEntity<CartPayment200Response>> cartPaymentWithHttpInfo(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {};
+        ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {
+        };
         return cartPaymentRequestCreation(cartPaymentRequest).toEntity(localVarReturnType);
     }
 
     /**
      * Оплата заказа
-     * 
+     *
      * <p><b>200</b> - Платёж успешно выполнен
      * <p><b>400</b> - Недостаточно средств
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param cartPaymentRequest The cartPaymentRequest parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -137,9 +144,10 @@ public class DefaultApi {
 
     /**
      * Получение баланса
-     * 
+     *
      * <p><b>200</b> - Успешный ответ
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param userId Идентификатор пользователя
      * @return GetBalanceById200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -160,52 +168,58 @@ public class DefaultApi {
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
-        final String[] localVarAccepts = { 
-            "application/json"
+        final String[] localVarAccepts = {
+                "application/json"
         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { };
+        final String[] localVarContentTypes = {};
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
-        String[] localVarAuthNames = new String[] {  };
+        String[] localVarAuthNames = new String[]{};
 
-        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {};
+        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {
+        };
         return apiClient.invokeAPI("/balance/{userId}", HttpMethod.GET, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
      * Получение баланса
-     * 
+     *
      * <p><b>200</b> - Успешный ответ
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param userId Идентификатор пользователя
      * @return GetBalanceById200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     public Mono<GetBalanceById200Response> getBalanceById(String userId) throws WebClientResponseException {
-        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {};
+        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {
+        };
         return getBalanceByIdRequestCreation(userId).bodyToMono(localVarReturnType);
     }
 
     /**
      * Получение баланса
-     * 
+     *
      * <p><b>200</b> - Успешный ответ
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param userId Идентификатор пользователя
      * @return ResponseEntity&lt;GetBalanceById200Response&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     public Mono<ResponseEntity<GetBalanceById200Response>> getBalanceByIdWithHttpInfo(String userId) throws WebClientResponseException {
-        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {};
+        ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {
+        };
         return getBalanceByIdRequestCreation(userId).toEntity(localVarReturnType);
     }
 
     /**
      * Получение баланса
-     * 
+     *
      * <p><b>200</b> - Успешный ответ
      * <p><b>404</b> - Пользователь не найден
+     *
      * @param userId Идентификатор пользователя
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API

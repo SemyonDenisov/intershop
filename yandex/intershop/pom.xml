@@ -83,35 +83,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Testcontainers: Redis -->
-        <dependency>
-            <groupId>com.redis</groupId>
-            <artifactId>testcontainers-redis</artifactId>
-            <version>2.2.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Testcontainers: JUnit 5 -->
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>1.19.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- JUnit Platform Launcher (for IDE/test runners) -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>ru.yandex.payment</groupId>
             <artifactId>payment-client</artifactId>
             <version>1.0.0</version>
@@ -144,6 +115,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <executable>true</executable>
                 </configuration>
                 <executions>
                     <execution>
