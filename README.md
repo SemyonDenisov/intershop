@@ -6,7 +6,9 @@
 3) поменять savePath в application.yml для intershop на свой (абсолютный путь до папки storage\images, в случае запуска не в docker)
 4) mvn clean install
 5) для запуска через docker:  docker-compose up --build
-6) для запуска без docker: Windows - starts_apps.bat Linux - ./start_apps.sh
+6) для запуска без docker: Windows - starts_apps.bat Linux - ./start_apps.sh (должен быть запущен redis или же сначала его запустить docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli")
+
+Изначально набалансе 20.0 единиц, если баланса не хватает для совершения покупки, то кнопка становится не аактивной
 
 
 **Функционал приложения**
