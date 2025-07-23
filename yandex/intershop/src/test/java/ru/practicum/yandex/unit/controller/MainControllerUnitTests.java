@@ -55,10 +55,7 @@ public class MainControllerUnitTests {
                 1,
                 "test",
                 "NO")
-        ).then(invocation -> {
-            System.out.println("ARGS: " + Arrays.toString(invocation.getArguments()));
-            return Flux.just(item);
-        });
+        ).then(invocation -> Flux.just(item));
         webTestClient.get()
                 .uri("/")
                 .exchange()

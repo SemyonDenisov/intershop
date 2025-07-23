@@ -108,7 +108,6 @@ public class ItemServiceImpl implements ItemService {
             return savedImageMono
                     .then(itemsRepository.save(item));
         }).doOnError(throwable -> {
-            System.out.println("file not downloaded");
             throw new RuntimeException(throwable);
         });
     }

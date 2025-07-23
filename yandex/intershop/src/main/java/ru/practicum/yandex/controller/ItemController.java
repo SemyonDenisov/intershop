@@ -47,10 +47,7 @@ public class ItemController {
                                 @RequestPart(name = "image") Mono<FilePart> image,
                                 @RequestPart(name = "price") String price,
                                 @RequestPart(name = "description") String description) {
-        return itemService.addItem(title, description, Double.parseDouble(price), image).map(item -> {
-            System.out.println("sss");
-            return item;
-        }).thenReturn("redirect:/main/items");
+        return itemService.addItem(title, description, Double.parseDouble(price), image).map(item -> item).thenReturn("redirect:/main/items");
     }
 
 }

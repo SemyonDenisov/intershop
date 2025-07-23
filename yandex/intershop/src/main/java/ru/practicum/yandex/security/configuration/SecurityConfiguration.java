@@ -18,6 +18,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.authentication.ServerHttpBasicAuthenticationConverter;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.csrf.WebSessionServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler;
 import org.springframework.web.server.WebSession;
 import ru.practicum.yandex.security.dao.RoleRepository;
 import ru.practicum.yandex.security.dao.UserRepository;
@@ -36,11 +37,15 @@ public class SecurityConfiguration {
         AuthenticationWebFilter authFilter = new AuthenticationWebFilter(authenticationManager);
         authFilter.setServerAuthenticationConverter(new ServerHttpBasicAuthenticationConverter());
         WebSessionServerCsrfTokenRepository csrfTokenRepository = new WebSessionServerCsrfTokenRepository();
+        var csrfHandler = new XorServerCsrfTokenRequestAttributeHandler();
+
+        csrfHandler.setTokenFromMultipartDataEnabled( true);
 
         return http
-                //.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .csrf(csrf -> csrf
+                        .csrfTokenRequestHandler(csrfHandler)
                         .csrfTokenRepository(csrfTokenRepository)
+
                 )
                 .addFilterAt(authFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(exchanges -> exchanges
