@@ -38,5 +38,26 @@ insert into items(title, description, price,count,img_path) values ('Футбо�
 insert into items(title, description, price,count,img_path) values ('Футболка 6','подделка',7.5,0,'6.jpg');
 insert into items(title, description, price,count,img_path) values ('Футболка 7','эта вообще женская',8.5,0,'7.jpg');
 
+create table if not exists users(
+                                    id bigint generated always as identity primary key,
+                                    username varchar(30) not null,
+    password varchar(350) not null);
+
+
+create table if not exists roles(
+                                    id bigint generated always as identity primary key,
+                                    rolename varchar(30) not null);
+
+create table if not exists user_role(
+                                    id bigint generated always as identity primary key,
+                                    user_id bigint,
+                                    role_id bigint);
+
+insert into users(username,password) values('senja','{bcrypt}$2a$12$wDWZKTtq3wLPOIMxWF2mf.Bc6ARYJAx6q1XPfo60.eCKehlz.SrC.');
+
+insert into roles(rolename) values('USER');
+
+insert into user_role(user_id,role_id) values (1,1);
+
 insert into cart ()
 values ();

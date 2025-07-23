@@ -1,4 +1,4 @@
-package ru.practicum.yandex.DAO;
+package ru.practicum.yandex.dao;
 
 
 import lombok.NonNull;

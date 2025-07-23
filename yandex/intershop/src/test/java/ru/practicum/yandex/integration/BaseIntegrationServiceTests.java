@@ -9,7 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.yandex.DAO.*;
+import ru.practicum.yandex.dao.*;
 import ru.practicum.yandex.EmbeddedRedisConfiguration;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;

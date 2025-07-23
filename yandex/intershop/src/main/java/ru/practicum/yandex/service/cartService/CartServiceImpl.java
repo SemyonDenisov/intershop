@@ -2,9 +2,9 @@ package ru.practicum.yandex.service.cartService;
 
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DAO.CartItemRepository;
-import ru.practicum.yandex.DAO.CartRepository;
-import ru.practicum.yandex.DAO.ItemsRepository;
+import ru.practicum.yandex.dao.CartItemRepository;
+import ru.practicum.yandex.dao.CartRepository;
+import ru.practicum.yandex.dao.ItemsRepository;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @Service
-public class CartServiceH2Impl implements CartService {
+public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final ItemsRepository itemsRepository;
@@ -22,10 +22,10 @@ public class CartServiceH2Impl implements CartService {
 
     private final ItemCacheService itemCacheService;
 
-    public CartServiceH2Impl(CartRepository cartRepository,
-                             ItemsRepository itemsRepository,
-                             CartItemRepository cartItemRepository,
-                             ItemCacheService itemCacheService) {
+    public CartServiceImpl(CartRepository cartRepository,
+                           ItemsRepository itemsRepository,
+                           CartItemRepository cartItemRepository,
+                           ItemCacheService itemCacheService) {
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;
         this.cartItemRepository = cartItemRepository;

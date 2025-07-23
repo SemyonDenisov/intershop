@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DTO.OrderWithItems;
+import ru.practicum.yandex.dto.OrderWithItems;
 import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;

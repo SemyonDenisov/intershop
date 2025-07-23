@@ -3,8 +3,8 @@ package ru.practicum.yandex.service.orderService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DAO.*;
-import ru.practicum.yandex.DTO.OrderWithItems;
+import ru.practicum.yandex.dao.*;
+import ru.practicum.yandex.dto.OrderWithItems;
 import ru.practicum.yandex.model.*;
 import ru.practicum.yandex.service.paymentService.PaymentService;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
@@ -12,7 +12,7 @@ import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 import java.util.List;
 
 @Service
-public class OrderServiceH2Impl implements OrderService {
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
@@ -22,13 +22,13 @@ public class OrderServiceH2Impl implements OrderService {
     private final PaymentService paymentService;
     private final ItemCacheService itemCacheService;
 
-    public OrderServiceH2Impl(OrderRepository orderRepository,
-                              CartRepository cartRepository,
-                              ItemsRepository itemsRepository,
-                              OrderItemRepository orderItemRepository,
-                              CartItemRepository cartItemRepository,
-                              PaymentService paymentService,
-                              ItemCacheService itemCacheService) {
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            CartRepository cartRepository,
+                            ItemsRepository itemsRepository,
+                            OrderItemRepository orderItemRepository,
+                            CartItemRepository cartItemRepository,
+                            PaymentService paymentService,
+                            ItemCacheService itemCacheService) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.itemsRepository = itemsRepository;

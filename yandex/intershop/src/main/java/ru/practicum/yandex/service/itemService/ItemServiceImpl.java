@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DAO.ItemsRepository;
+import ru.practicum.yandex.dao.ItemsRepository;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 
@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class ItemServiceH2Impl implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     @Value("${spring.image.savePath}")
     String imagePath;
@@ -33,8 +33,8 @@ public class ItemServiceH2Impl implements ItemService {
 
     private final ItemCacheService itemCacheService;
 
-    ItemServiceH2Impl(ItemsRepository itemsRepository,
-                      ItemCacheService itemCacheService) {
+    ItemServiceImpl(ItemsRepository itemsRepository,
+                    ItemCacheService itemCacheService) {
         this.itemsRepository = itemsRepository;
         this.itemCacheService = itemCacheService;
     }

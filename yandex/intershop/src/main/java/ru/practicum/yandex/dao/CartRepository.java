@@ -1,4 +1,4 @@
-package ru.practicum.yandex.DAO;
+package ru.practicum.yandex.dao;
 
 import lombok.NonNull;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;

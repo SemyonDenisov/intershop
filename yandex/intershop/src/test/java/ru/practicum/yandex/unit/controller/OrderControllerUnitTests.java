@@ -9,7 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DTO.OrderWithItems;
+import ru.practicum.yandex.dto.OrderWithItems;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Order;
 import ru.practicum.yandex.service.cartService.CartService;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebFluxTest
 public class OrderControllerUnitTests {

@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.practicum.yandex.DAO.*;
+import ru.practicum.yandex.dao.*;
 import ru.practicum.yandex.model.*;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
 import ru.practicum.yandex.service.orderService.OrderService;
