@@ -14,11 +14,15 @@ public class Order {
     @Id
     int id;
 
+    @Column(value = "user_id")
+    int userId;
+
     @Column("total_sum")
     double totalSum;
 
-    public Order(double totalSum) {
+    public Order(double totalSum,Integer userId) {
         this.totalSum = totalSum;
+        this.userId = userId;
     }
 
     public Order() {

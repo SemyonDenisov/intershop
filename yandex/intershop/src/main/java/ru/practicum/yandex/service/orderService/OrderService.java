@@ -8,9 +8,9 @@ import ru.practicum.yandex.model.Order;
 
 
 public interface OrderService {
-    Flux<OrderWithItems> findAll();
+    Flux<OrderWithItems> findAll(String username);
 
-    Mono<OrderWithItems> findById(int id);
+    Mono<OrderWithItems> findById(int id, String username);
 
-    Mono<Order> createOrder(Cart cart);
+    Mono<Order> createOrder(String username);
 }
