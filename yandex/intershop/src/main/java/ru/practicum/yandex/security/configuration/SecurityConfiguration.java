@@ -3,6 +3,7 @@ package ru.practicum.yandex.security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
@@ -49,6 +50,7 @@ public class SecurityConfiguration {
                 )
                 .addFilterAt(authFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(HttpMethod.POST, "/main/items/*").hasRole("USER")
                         .pathMatchers("/main/**").permitAll()
                         .pathMatchers("/login").permitAll()
                         .anyExchange().authenticated()

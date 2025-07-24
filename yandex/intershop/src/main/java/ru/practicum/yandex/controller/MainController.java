@@ -1,8 +1,12 @@
 package ru.practicum.yandex.controller;
 
 import com.google.common.collect.Lists;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +43,9 @@ public class MainController {
                               @RequestParam(name = "search", defaultValue = "") String search,
                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                               @RequestParam(name = "pageNumber", defaultValue = "1") Integer pageNumber,
-                              @RequestParam(name = "sort", defaultValue = "NO") String sort) {
-
-        Flux<Item> items = itemService.findAll(pageSize, pageNumber, search, sort);
+                              @RequestParam(name = "sort", defaultValue = "NO") String sort,
+                              Authentication principal) {
+        Flux<Item> items = itemService.findAll(pageSize, pageNumber, search, sort, principal != null ? principal.getName() : "");
         Mono<Long> totalItems = itemService.getCount();
         return items.collectList().zipWith(totalItems).flatMap(tuple -> {
             List<Item> items1 = tuple.getT1();
@@ -56,6 +60,7 @@ public class MainController {
     }
 
     @PostMapping(value = "/main/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    // @PreAuthorize("hasRole('USER')")
     public Mono<String> changeCountOfItemInCart(@PathVariable(name = "id") Integer id,
                                                 @RequestPart(name = "action") String action,
                                                 Principal principal) {

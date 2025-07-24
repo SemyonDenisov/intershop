@@ -7,3 +7,4 @@ create table if not exists balance(
 
 
 insert into balance(user_id,amount) values (1,20);
+insert into balance(user_id,amount) values (2,777);

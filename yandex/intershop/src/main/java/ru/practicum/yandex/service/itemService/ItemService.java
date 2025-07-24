@@ -10,7 +10,7 @@ import ru.practicum.yandex.model.Item;
 import java.io.IOException;
 
 public interface ItemService {
-    Flux<Item> findAll(int pageSize, int pageNumber, String title, String sort);
+    Flux<Item> findAll(int pageSize, int pageNumber, String title, String sort,String username );
 
     Mono<Item> findById(Integer id);
 

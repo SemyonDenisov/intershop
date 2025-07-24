@@ -1,6 +1,7 @@
 package ru.practicum.yandex.service.cartService;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.dao.CartItemRepository;
@@ -39,6 +40,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @PreAuthorize("#username == authentication.name")
     public Mono<Void> changeCart(Integer itemId, String action, String username) {
         return getCartByUsername(username).map(Cart::getId)
                 .flatMap(cartId -> cartItemRepository
@@ -52,22 +54,28 @@ public class CartServiceImpl implements CartService {
                     switch (action.toUpperCase()) {
                         case "PLUS" -> {
                             cartItem.setCount(cartItem.getCount() + 1);
-                            item.setCount(item.getCount() + 1);
+                            //item.setCount(item.getCount() + 1);
                             itemCacheService.cacheItem(item, true);
-                            return itemsRepository.save(item).zipWith(cartItemRepository.save(cartItem));
+                            return cartItemRepository.save(cartItem);
                         }
                         case "MINUS" -> {
-                            if (item.getCount() > 0) {
-                                item.setCount(item.getCount() - 1);
+                            if (cartItem.getCount() > 0) {
+                                //item.setCount(item.getCount() - 1);
                                 cartItem.setCount(cartItem.getCount() - 1);
+                                Mono<Void> actionMono;
+                                if (cartItem.getCount() == 0) {
+                                    actionMono = cartItemRepository.deleteByItemId(itemId);
+                                } else {
+                                    actionMono = cartItemRepository.save(cartItem).then();
+                                }
                                 itemCacheService.cacheItem(item, true);
-                                return itemsRepository.save(item).zipWith(cartItemRepository.save(cartItem));
+                                return actionMono;
                             }
                         }
                         case "DELETE" -> {
-                            item.setCount(0);
+                            //item.setCount(0);
                             itemCacheService.cacheItem(item, true);
-                            return itemsRepository.save(item).zipWith(cartItemRepository.deleteByItemId(item.getId()));
+                            return cartItemRepository.deleteByItemId(item.getId());
                         }
                     }
                     return Mono.empty();
@@ -75,6 +83,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @PreAuthorize("#username == authentication.name")
     public Mono<Cart> getCart(String username) {
         return userRepository.findByUsername(username)
                 .flatMap(user -> {
@@ -87,6 +96,7 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
+    @PreAuthorize("#username == authentication.name")
     public Mono<Cart> getCartByUsername(String username) {
         return userRepository
                 .findByUsername(username)
@@ -94,7 +104,11 @@ public class CartServiceImpl implements CartService {
                 .switchIfEmpty(this.getCart(username))
                 .flatMap(cart -> cartItemRepository
                         .findByCartId(cart.getId())
-                        .flatMap(cartItem -> itemsRepository.findById(cartItem.getItemId()))
+                        .flatMap(cartItem -> itemsRepository.findById(cartItem.getItemId())
+                                .map(item -> {
+                                    item.setCount(cartItem.getCount());
+                                    return item;
+                                }))
                         .collectList()
                         .map(items -> {
                             cart.setItems(new HashSet<>(items));

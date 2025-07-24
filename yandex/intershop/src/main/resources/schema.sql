@@ -84,6 +84,7 @@ create table if not exists orders
     identity
     primary
     key,
+    user_id bigint,
     total_sum
     bigint
 );

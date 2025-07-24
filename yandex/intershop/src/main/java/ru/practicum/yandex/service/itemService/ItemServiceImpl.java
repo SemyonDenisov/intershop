@@ -1,5 +1,7 @@
 package ru.practicum.yandex.service.itemService;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 
@@ -8,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.practicum.yandex.dao.CartItemRepository;
 import ru.practicum.yandex.dao.ItemsRepository;
+import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.service.cache.itemCacheService.ItemCacheService;
+import ru.practicum.yandex.service.cartService.CartService;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +29,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     @Value("${spring.image.savePath}")
@@ -33,18 +39,33 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemCacheService itemCacheService;
 
-    ItemServiceImpl(ItemsRepository itemsRepository,
-                    ItemCacheService itemCacheService) {
-        this.itemsRepository = itemsRepository;
-        this.itemCacheService = itemCacheService;
+    private final CartItemRepository cartItemRepository;
+    private final CartService cartService;
+
+
+    private Mono<Item> getItemsWithActualCount(Item item, Integer cartId) {
+        if (cartId <= 0) {
+            return Mono.just(item);
+        } else {
+            return cartItemRepository.findByCartIdAndItemId(cartId, item.getId())
+                    .map(cartItem -> {
+                        if (cartItem == null) {
+                            item.setCount(0);
+                        } else {
+                            item.setCount(cartItem.getCount());
+                        }
+                        return item;
+                    })
+                    .switchIfEmpty(Mono.just(item));
+        }
     }
 
     @Override
-    public Flux<Item> findAll(int pageSize, int pageNumber, String title, String sort) {
-        List<Item> cachedItems = itemCacheService.getAllItems((pageNumber - 1) * pageSize, pageSize, sort, title);
-        if (cachedItems != null && !cachedItems.isEmpty()) {
-            return Flux.fromIterable(cachedItems);
-        }
+    public Flux<Item> findAll(int pageSize, int pageNumber, String title, String sort, String username) {
+//        List<Item> cachedItems = itemCacheService.getAllItems((pageNumber - 1) * pageSize, pageSize, sort, title);
+//        if (cachedItems != null && !cachedItems.isEmpty()) {
+//            return Flux.fromIterable(cachedItems);
+//        }
 
         Sort sortForRequest;
         switch (sort) {
@@ -52,19 +73,29 @@ public class ItemServiceImpl implements ItemService {
             case "PRICE" -> sortForRequest = Sort.by(Sort.Direction.ASC, "price");
             default -> sortForRequest = Sort.by(Sort.Direction.DESC, "id");
         }
-        if (title == null || title.isEmpty()) {
-            return itemsRepository.findAll(sortForRequest).collectList()
-                    .map(items ->
-                            {
-                                itemCacheService.cacheItems(items, sort, title, (pageNumber - 1) * pageSize, pageSize);
-                                return items;
-                            }
-                    )
-                    .flatMapMany(Flux::fromIterable)
-                    .skip((long) pageSize * (pageNumber - 1))
-                    .take(pageSize);
+        Mono<Integer> cartIdMono;
+        if (!username.isEmpty()) {
+            cartIdMono = cartService.getCartByUsername(username).map(Cart::getId);
         } else {
-            return itemsRepository.findAllByTitleContainingIgnoreCase(title, sortForRequest)
+            cartIdMono = Mono.just(-1);
+        }
+        if (title == null || title.isEmpty()) {
+            return cartIdMono.flatMapMany(cartId ->
+                    itemsRepository.findAll(sortForRequest)
+                            .flatMap(item -> this.getItemsWithActualCount(item, cartId))
+                            .collectList()
+                            .map(items ->
+                                    {
+                                        itemCacheService.cacheItems(items, sort, title, (pageNumber - 1) * pageSize, pageSize);
+                                        return items;
+                                    }
+                            )
+                            .flatMapMany(Flux::fromIterable)
+                            .skip((long) pageSize * (pageNumber - 1))
+                            .take(pageSize));
+        } else {
+            return cartIdMono.flatMapMany(cartId -> itemsRepository.findAllByTitleContainingIgnoreCase(title, sortForRequest)
+                    .flatMap(item -> this.getItemsWithActualCount(item, cartId))
                     .collectList()
                     .map(items ->
                             {
@@ -73,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
                             }
                     )
                     .flatMapMany(Flux::fromIterable).skip((long) pageSize * (pageNumber - 1))
-                    .take(pageSize);
+                    .take(pageSize));
         }
     }
 

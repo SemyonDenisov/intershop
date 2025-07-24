@@ -5,6 +5,6 @@ import ru.practicum.yandex.model.Order;
 import ru.yandex.payment.client.model.CartPayment200Response;
 
 public interface PaymentService {
-    Mono<Double> getBalance();
-    Mono<CartPayment200Response> makeOrder(Order order);
+    Mono<Double> getBalance(String username);
+    Mono<CartPayment200Response> makeOrder(String username,Order order);
 }

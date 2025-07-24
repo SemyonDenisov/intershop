@@ -59,6 +59,7 @@
                 ⚠️ Сервер временно недоступен. Пожалуйста, попробуйте позже.
             </div>
             <form action="/orders/buy" method="post" th:if="${!empty}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <button th:disabled="${!availableToBuy or !serverAvailable}">Купить</button>
             </form>
         </td>
