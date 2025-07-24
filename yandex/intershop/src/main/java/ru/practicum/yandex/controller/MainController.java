@@ -14,6 +14,7 @@ import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 
@@ -40,12 +41,12 @@ public class MainController {
                               @RequestParam(name = "pageNumber", defaultValue = "1") Integer pageNumber,
                               @RequestParam(name = "sort", defaultValue = "NO") String sort) {
 
-        Flux<Item> items = itemService.findAll(pageSize,pageNumber, search, sort);
+        Flux<Item> items = itemService.findAll(pageSize, pageNumber, search, sort);
         Mono<Long> totalItems = itemService.getCount();
         return items.collectList().zipWith(totalItems).flatMap(tuple -> {
             List<Item> items1 = tuple.getT1();
             long count = tuple.getT2();
-            Paging paging = new Paging(pageNumber, pageSize, count/((long) pageNumber *pageSize)>0, pageNumber > 1);
+            Paging paging = new Paging(pageNumber, pageSize, count / ((long) pageNumber * pageSize) > 0, pageNumber > 1);
             model.addAttribute("items", Lists.partition(items1, 5));
             model.addAttribute("search", search);
             model.addAttribute("sort", sort);
@@ -54,10 +55,11 @@ public class MainController {
         });
     }
 
-    @PostMapping(value = "/main/items/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/main/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Mono<String> changeCountOfItemInCart(@PathVariable(name = "id") Integer id,
-                                                @RequestPart(name = "action") String action) {
-        return cartService.changeCart(id, action).thenReturn("redirect:/main/items");
+                                                @RequestPart(name = "action") String action,
+                                                Principal principal) {
+        return cartService.changeCart(id, action, principal.getName()).thenReturn("redirect:/main/items");
     }
 
     @GetMapping(value = "/main/image/{filename}")

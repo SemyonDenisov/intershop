@@ -1,7 +1,9 @@
 package ru.practicum.yandex.model;
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 
@@ -13,12 +15,18 @@ import lombok.Setter;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Getter
 @Table(name="cart")
 @AllArgsConstructor
+@Data
 public class Cart {
     @Id
     int id;
+
+    @Column(value = "user_id")
+    Integer userId;
+
+    @Column(value = "info")
+    String info;
 
     @Setter
     @Transient

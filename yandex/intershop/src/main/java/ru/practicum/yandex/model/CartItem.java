@@ -1,18 +1,15 @@
 package ru.practicum.yandex.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Getter
-@Table(name="cart_item")
+@Table(name = "cart_item")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class CartItem {
     @Id
     Integer id;
@@ -25,10 +22,13 @@ public class CartItem {
     @Column("item_id")
     Integer itemId;
 
+    @Column("count")
+    Integer count;
 
 
     public CartItem(Integer cartId, Integer itemId) {
         this.cartId = cartId;
         this.itemId = itemId;
+        this.count = 0;
     }
 }

@@ -51,7 +51,6 @@ public class SecurityConfiguration {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/main/**").permitAll()
                         .pathMatchers("/login").permitAll()
-                        .pathMatchers("/logout").permitAll()
                         .anyExchange().authenticated()
                 )
                 .formLogin(form -> form

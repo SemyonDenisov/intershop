@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 
+import java.security.Principal;
+
 
 @Controller
 public class ItemController {
@@ -31,10 +33,11 @@ public class ItemController {
         });
     }
 
-    @PostMapping(value = "/items/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Mono<String> addItemToCart(@PathVariable(name = "id") Integer id,
-                                      @RequestPart(name = "action") String action) {
-        return cartService.changeCart(id, action).thenReturn("redirect:/items/" + id);
+                                      @RequestPart(name = "action") String action,
+                                      Principal principal) {
+        return cartService.changeCart(id, action, principal.getName()).thenReturn("redirect:/items/" + id);
     }
 
     @GetMapping(value = "/items/add-form")

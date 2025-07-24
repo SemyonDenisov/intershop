@@ -10,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.List;
 
 @Getter
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -20,6 +20,9 @@ public class User {
     String username;
     @Column(value = "password")
     String password;
+
+    @Column("cart_id")
+    Integer cartId;
 
 
     @Setter

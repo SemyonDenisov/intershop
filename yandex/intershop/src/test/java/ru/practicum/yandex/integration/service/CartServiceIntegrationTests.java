@@ -39,7 +39,7 @@ public class CartServiceIntegrationTests extends BaseIntegrationServiceTests {
     @Test
     void test_changeCart(){
         int id = itemsRepository.findAll().collectList().block().get(0).getId();
-        cartService.changeCart(id,"plus").block();
+        cartService.changeCart(id,"plus","senja").block();
         Item item = itemsRepository.findById(id).block();
         assertEquals(2,item.getCount());
     }
