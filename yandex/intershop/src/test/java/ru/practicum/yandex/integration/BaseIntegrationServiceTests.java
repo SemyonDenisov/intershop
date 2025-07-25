@@ -11,6 +11,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.yandex.dao.*;
 import ru.practicum.yandex.EmbeddedRedisConfiguration;
+import ru.practicum.yandex.security.dao.UserRepository;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
@@ -39,6 +40,8 @@ public class BaseIntegrationServiceTests {
     protected CartService cartService;
     @Autowired
     protected ItemService itemService;
+    @Autowired
+    protected UserRepository userRepository;
 
     @MockitoBean
     protected PaymentService paymentService;

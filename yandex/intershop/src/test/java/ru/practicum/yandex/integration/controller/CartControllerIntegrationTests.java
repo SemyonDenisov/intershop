@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -45,8 +46,9 @@ public class CartControllerIntegrationTests extends BaseIntegrationControllerTes
     }
 
     @Test
+    @WithMockUser(username = "senja")
     void test_showCart() {
-        Mockito.when(paymentService.getBalance()).thenReturn(Mono.just(10.0));
+        Mockito.when(paymentService.getBalance("senja")).thenReturn(Mono.just(10.0));
         webTestClient.get()
                 .uri("/cart/items")
                 .exchange()

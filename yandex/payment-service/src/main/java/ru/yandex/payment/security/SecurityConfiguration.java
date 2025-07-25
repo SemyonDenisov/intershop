@@ -28,9 +28,6 @@ public class SecurityConfiguration {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.POST, "/main/items/*").hasRole("USER")
-                        .pathMatchers("/main/**").permitAll()
-                        .pathMatchers("/login").permitAll()
                         .anyExchange().authenticated()
                 ).oauth2ResourceServer(serverSpec ->
                         serverSpec
@@ -38,11 +35,18 @@ public class SecurityConfiguration {
                                     ReactiveJwtAuthenticationConverter jwtAuthenticationConverter = new ReactiveJwtAuthenticationConverter();
                                     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
                                         Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-                                        Map<String, Object> account = (Map<String, Object>) resourceAccess.get("account");
-                                        List<String> roles = (List<String>) account.get("roles");
-                                        return Flux.fromIterable(roles)
-                                                .map(SimpleGrantedAuthority::new)
-                                                .map(GrantedAuthority.class::cast);
+                                        if (resourceAccess != null) {
+                                            Map<String, Object> account = (Map<String, Object>) resourceAccess.get("account");
+                                            if (account != null) {
+                                                List<String> roles = (List<String>) account.get("roles");
+                                                if (roles != null) {
+                                                    return Flux.fromIterable(roles)
+                                                            .map(SimpleGrantedAuthority::new)
+                                                            .map(GrantedAuthority.class::cast);
+                                                }
+                                            }
+                                        }
+                                        return Flux.empty();
 
                                     });
 

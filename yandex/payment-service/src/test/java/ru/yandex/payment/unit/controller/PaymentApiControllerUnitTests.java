@@ -4,6 +4,7 @@ package ru.yandex.payment.unit.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -25,6 +26,7 @@ public class PaymentApiControllerUnitTests {
     private WebTestClient webClient;
 
     @Test
+    @WithMockUser(username = "senja", roles = {"manage-account","manage-account-links","view-profile"})
     void test_payment() {
         CartPaymentRequest request = new CartPaymentRequest(1, 100.0);
         CartPaymentResponse response = new CartPaymentResponse("OK", 50.0);

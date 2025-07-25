@@ -9,11 +9,13 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.security.dao.UserRepository;
 import ru.practicum.yandex.service.cartService.CartService;
 import ru.practicum.yandex.service.itemService.ItemService;
 import ru.practicum.yandex.service.orderService.OrderService;
@@ -22,6 +24,7 @@ import ru.practicum.yandex.service.paymentService.PaymentService;
 import java.nio.charset.StandardCharsets;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 
 @WebFluxTest
@@ -37,6 +40,8 @@ public class ItemControllerUnitTests {
     OrderService orderService;
     @MockitoBean
     PaymentService paymentService;
+    @MockitoBean
+    UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
@@ -44,6 +49,7 @@ public class ItemControllerUnitTests {
     }
 
     @Test
+    @WithMockUser(username = "senja")
     void test_getItemInfo() throws Exception {
         Item item = new Item();
         item.setCount(1);
@@ -58,20 +64,22 @@ public class ItemControllerUnitTests {
     }
 
     @Test
+    @WithMockUser(username = "senja",roles={"USER"})
     void test_addItemToCart() throws Exception {
-        when(cartService.changeCart(1, "plus")).thenReturn(Mono.empty());
+        when(cartService.changeCart(1, "plus","senja")).thenReturn(Mono.empty());
         var builder = new MultipartBodyBuilder();
         builder.part("action", "plus");
-        webTestClient.post()
+        webTestClient.mutateWith(csrf()).post()
                 .uri("/items/1")
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/1");
-        verify(cartService, times(1)).changeCart(1, "plus");
+        verify(cartService, times(1)).changeCart(1, "plus","senja");
     }
 
     @Test
+    @WithMockUser(username = "senja",roles={"USER"})
     void test_addItem() throws Exception {
         byte[] content = "test-content".getBytes(StandardCharsets.UTF_8);
 
@@ -82,7 +90,7 @@ public class ItemControllerUnitTests {
         builder.part("description", "This is a test");
 
         when(itemService.addItem(eq("test"), eq("This is a test"), eq(3.0), any())).thenReturn(Mono.empty());
-        webTestClient.post().uri("/items/add")
+        webTestClient.mutateWith(csrf()).post().uri("/items/add")
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()
                 .expectStatus().is3xxRedirection()

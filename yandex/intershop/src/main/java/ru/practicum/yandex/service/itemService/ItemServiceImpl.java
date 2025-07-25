@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
@@ -121,6 +122,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @PreAuthorize("hasRole('MODERATOR')")
     public Mono<Item> addItem(String title, String description, Double price, Mono<FilePart> imageMono) {
         Item item = new Item();
         item.setTitle(title);

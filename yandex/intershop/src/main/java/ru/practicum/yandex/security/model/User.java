@@ -1,5 +1,6 @@
 package ru.practicum.yandex.security.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -9,7 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 
-@Getter
+@Data
 @Table(name = "users")
 public class User {
 

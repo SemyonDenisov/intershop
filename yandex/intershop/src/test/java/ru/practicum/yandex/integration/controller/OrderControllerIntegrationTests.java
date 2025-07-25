@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -32,6 +33,7 @@ public class OrderControllerIntegrationTests extends BaseIntegrationControllerTe
 
 
     @BeforeEach
+    @WithMockUser(username = "senja")
     public void setUp() {
         Item item = new Item("title1", "description1", 1.0, 1, "");
         item = itemsRepository.save(item).block();
@@ -39,8 +41,8 @@ public class OrderControllerIntegrationTests extends BaseIntegrationControllerTe
         cart = cartRepository.save(cart).block();
         cartItemRepository.save(new CartItem(cart.getId(), item.getId())).block();
         CartPayment200Response cr = new CartPayment200Response();
-        when(paymentService.makeOrder(any())).thenReturn(Mono.just(cr));
-        Order order = orderService.createOrder(cart).block();
+        when(paymentService.makeOrder("senja",any())).thenReturn(Mono.just(cr));
+        Order order = orderService.createOrder("senja").block();
     }
 
     @Test

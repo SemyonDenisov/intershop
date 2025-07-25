@@ -1,12 +1,14 @@
 package ru.practicum.yandex.security.model;
 
 
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 
 @Table(value = "roles")
+@Data
 public class Role implements GrantedAuthority {
 
     @Id
