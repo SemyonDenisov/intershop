@@ -84,7 +84,8 @@ create table if not exists orders
     identity
     primary
     key,
-    user_id bigint,
+    user_id
+    bigint,
     total_sum
     bigint
 );
@@ -164,8 +165,13 @@ values ('nesenja', 2, '{bcrypt}$2a$12$wDWZKTtq3wLPOIMxWF2mf.Bc6ARYJAx6q1XPfo60.e
 insert into roles(rolename)
 values ('USER');
 
+insert into roles(rolename)
+values ('MODERATOR');
+
 insert into user_role(user_id, role_id)
 values (1, 1);
+insert into user_role(user_id, role_id)
+values (1, 2);
 insert into user_role(user_id, role_id)
 values (2, 1);
 

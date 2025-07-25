@@ -60,7 +60,7 @@ public class MainController {
     }
 
     @PostMapping(value = "/main/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    // @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> changeCountOfItemInCart(@PathVariable(name = "id") Integer id,
                                                 @RequestPart(name = "action") String action,
                                                 Principal principal) {

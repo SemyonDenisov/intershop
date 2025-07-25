@@ -1,6 +1,7 @@
 package ru.practicum.yandex.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class OrderController {
     private final UserRepository userRepository;
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> orders(Model model, Principal principal) {
         return orderService.findAll(principal.getName()).collectList()
                 .flatMap(orderWithItems -> {
@@ -29,6 +31,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> order(@PathVariable(name = "id") int id,
                               @RequestParam(name = "newOrder", defaultValue = "false") Boolean newOrder,
                               Model model, Principal principal) {
@@ -41,6 +44,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "/buy")
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> buy(Principal principal) {
         return orderService.createOrder(principal.getName())
                 .flatMap(order -> Mono.just("redirect:/orders/" + order.getId() + "?newOrder=true"))

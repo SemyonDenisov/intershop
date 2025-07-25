@@ -60,6 +60,8 @@ public class SecurityConfiguration {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/main/items/*").hasRole("USER")
                         .pathMatchers("/main/**").permitAll()
+                        .pathMatchers("/").permitAll()
+                        .pathMatchers(HttpMethod.GET,"/items/*").permitAll()
                         .pathMatchers("/login").permitAll()
                         .anyExchange().authenticated()
                 )

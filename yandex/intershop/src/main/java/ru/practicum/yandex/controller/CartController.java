@@ -26,6 +26,7 @@ public class CartController {
 
 
     @GetMapping(value = "/items")
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> showCart(Model model, Principal principal) {
         return cartService.getCartByUsername(principal.getName())
                 .flatMap(cart ->
@@ -47,6 +48,7 @@ public class CartController {
     }
 
     @PostMapping(value = "/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> addToCart(@PathVariable(name = "id") Integer id, @RequestPart(name = "action") String action, Principal principal) {
         return cartService.changeCart(id, action, principal.getName()).thenReturn("redirect:/cart/items");
     }

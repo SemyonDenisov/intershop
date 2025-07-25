@@ -3,6 +3,7 @@ package ru.practicum.yandex.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class ItemController {
     }
 
     @PostMapping(value = "/items/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('USER')")
     public Mono<String> addItemToCart(@PathVariable(name = "id") Integer id,
                                       @RequestPart(name = "action") String action,
                                       Principal principal) {
@@ -41,11 +43,13 @@ public class ItemController {
     }
 
     @GetMapping(value = "/items/add-form")
+    @PreAuthorize("hasRole('MODERATOR')")
     public Mono<String> addItemForm() {
         return Mono.just("add-item");
     }
 
     @PostMapping(value = "/items/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('MODERATOR')")
     public Mono<String> addItem(@RequestPart(name = "title") String title,
                                 @RequestPart(name = "image") Mono<FilePart> image,
                                 @RequestPart(name = "price") String price,
