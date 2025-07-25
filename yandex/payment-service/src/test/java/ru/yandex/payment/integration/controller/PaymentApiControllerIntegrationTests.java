@@ -25,6 +25,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 import static ru.yandex.payment.model.Action.MINUS;
 
 @AutoConfigureWebTestClient
@@ -58,7 +59,7 @@ public class PaymentApiControllerIntegrationTests {
 //        when(jwtDecoder.decode(mockToken)).thenReturn(mockJwt);  // Мокаем декодирование токена
 
         CartPaymentRequest request = new CartPaymentRequest(1, 50.0);
-        webClient.post()
+        webClient.mutateWith(csrf()).post()
                 .uri("/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

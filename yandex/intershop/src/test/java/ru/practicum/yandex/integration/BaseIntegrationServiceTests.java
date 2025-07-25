@@ -58,6 +58,7 @@ public class BaseIntegrationServiceTests {
         orderItemRepository.deleteAll().block();
         itemsRepository.deleteAll().block();
         cartItemRepository.deleteAll().block();
+        userRepository.deleteAll().block();
         reset(paymentService);
     }
 }

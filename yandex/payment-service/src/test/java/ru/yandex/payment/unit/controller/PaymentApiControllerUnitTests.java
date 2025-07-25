@@ -16,6 +16,7 @@ import ru.yandex.payment.service.BalanceService;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 import static ru.yandex.payment.model.Action.MINUS;
 
 @WebFluxTest
@@ -32,7 +33,7 @@ public class PaymentApiControllerUnitTests {
         CartPaymentResponse response = new CartPaymentResponse("OK", 50.0);
         when(balanceService.changeBalance(eq(1), eq(100.0), eq(MINUS))).thenReturn(Mono.just(response));
 
-        webClient.post()
+        webClient.mutateWith(csrf()).post()
                 .uri("/payment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

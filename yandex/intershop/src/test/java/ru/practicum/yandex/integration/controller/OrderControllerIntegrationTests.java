@@ -15,13 +15,16 @@ import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
 import ru.practicum.yandex.model.Order;
+import ru.practicum.yandex.security.model.User;
 import ru.yandex.payment.client.model.CartPayment200Response;
 
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 
 @SpringBootTest
@@ -33,19 +36,30 @@ public class OrderControllerIntegrationTests extends BaseIntegrationControllerTe
 
 
     @BeforeEach
-    @WithMockUser(username = "senja")
     public void setUp() {
         Item item = new Item("title1", "description1", 1.0, 1, "");
         item = itemsRepository.save(item).block();
+
         Cart cart = new Cart();
+        cart.setInfo("info");
         cart = cartRepository.save(cart).block();
+        User user = new User();
+        user.setUsername("senja");
+        user.setPassword("password");
+        user.setCartId(cart.getId());
+        userRepository.save(user).block();
+        cart.setUserId(user.getId());
+        cartRepository.save(cart).block();
+
         cartItemRepository.save(new CartItem(cart.getId(), item.getId())).block();
         CartPayment200Response cr = new CartPayment200Response();
-        when(paymentService.makeOrder("senja",any())).thenReturn(Mono.just(cr));
+        when(paymentService.makeOrder(eq("senja"), any())).thenReturn(Mono.just(cr));
         Order order = orderService.createOrder("senja").block();
+
     }
 
     @Test
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_getOrders() {
         webClient.get().uri("/orders/{id}", orderRepository.findAll().collectList().block().get(0).getId())
                 .exchange()
@@ -54,15 +68,17 @@ public class OrderControllerIntegrationTests extends BaseIntegrationControllerTe
     }
 
     @Test
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_getOrder() {
         webClient.get().uri("/orders").exchange().expectStatus().isOk();
     }
 
     @Test
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_buy() {
         List<Order> orderList = orderRepository.findAll().collectList().block();
         int id = orderList.get(orderList.size() - 1).getId() + 1;
-        webClient.post().uri("/orders/buy")
+        webClient.mutateWith(csrf()).post().uri("/orders/buy")
                 .exchange()
                 .expectStatus().is3xxRedirection()
                 .expectHeader().valueEquals(HttpHeaders.LOCATION, "/orders/" + id + "?newOrder=true");

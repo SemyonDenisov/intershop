@@ -21,10 +21,12 @@ import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
 import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.CartItem;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.security.model.User;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 
 @SpringBootTest
@@ -41,12 +43,21 @@ public class CartControllerIntegrationTests extends BaseIntegrationControllerTes
         Item item = new Item("title1", "description1", 1.0, 0, "");
         item = itemsRepository.save(item).block();
         Cart cart = new Cart();
+        cart.setInfo("info");
         cart = cartRepository.save(cart).block();
         cartItemRepository.save(new CartItem(cart.getId(), item.getId())).block();
+        User user = new User();
+        user.setUsername("senja");
+        user.setPassword("password");
+        user.setCartId(cart.getId());
+        user.setCartId(cart.getId());
+        userRepository.save(user).block();
+        cart.setUserId(user.getId());
+        cartRepository.save(cart).block();
     }
 
     @Test
-    @WithMockUser(username = "senja")
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_showCart() {
         Mockito.when(paymentService.getBalance("senja")).thenReturn(Mono.just(10.0));
         webTestClient.get()
@@ -56,12 +67,13 @@ public class CartControllerIntegrationTests extends BaseIntegrationControllerTes
     }
 
     @Test
+    @WithMockUser(username = "senja")
     void test_addToCart() {
         var builder = new MultipartBodyBuilder();
         builder.part("action", "plus");
         List<Item> items = itemsRepository.findAll().collectList().block();
         int lastId = items.get(items.size() - 1).getId();
-        webTestClient.post()
+        webTestClient.mutateWith(csrf()).post()
                 .uri("/cart/items/" + lastId)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(builder.build()))

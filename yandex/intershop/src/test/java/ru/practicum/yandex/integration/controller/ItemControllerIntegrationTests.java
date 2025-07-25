@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
@@ -19,13 +20,16 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.practicum.yandex.integration.BaseIntegrationControllerTests;
 import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
+import ru.practicum.yandex.model.Cart;
 import ru.practicum.yandex.model.Item;
+import ru.practicum.yandex.security.model.User;
 
 
 import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 
 @SpringBootTest
@@ -50,35 +54,47 @@ public class ItemControllerIntegrationTests extends BaseIntegrationControllerTes
         itemsRepository.save(new Item("title3", "description3", 3.0, 2, "")).block();
         itemsRepository.save(new Item("title4", "description4", 4.0, 3, "")).block();
         itemsRepository.save(new Item("title5", "description5", 5.0, 4, "")).block();
+        Cart cart = new Cart();
+        cart.setInfo("info");
+        cart = cartRepository.save(cart).block();
+        User user = new User();
+        user.setUsername("senja");
+        user.setPassword("password");
+        user.setCartId(cart.getId());
+        userRepository.save(user).block();
+        cart.setUserId(user.getId());
+        cartRepository.save(cart).block();
     }
 
     @Test
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_getItemInfo() throws Exception {
         var builder = new MultipartBodyBuilder();
         builder.part("action", "plus");
         List<Item> items = itemsRepository.findAll().collectList().block();
         int lastId = items.get(items.size() - 1).getId();
-        webTestClient.post()
+        webTestClient.mutateWith(csrf()).post()
                 .uri("/items/" + lastId)
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()
                 .expectStatus().is3xxRedirection()
-                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/"+lastId);
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/" + lastId);
         assertThat(redisTemplate.opsForValue().get("item:" + lastId) instanceof Item).isTrue();
     }
 
     @Test
+    @WithMockUser(username = "senja", roles = {"USER"})
     void test_addItemToCart() throws Exception {
         var builder = new MultipartBodyBuilder();
         builder.part("action", "plus");
         List<Item> items = itemsRepository.findAll().collectList().block();
         int lastId = items.get(items.size() - 1).getId();
-        webTestClient.post()
-                .uri("/items/"+lastId)
+        webTestClient.mutateWith(csrf()).post()
+                .uri("/items/" + lastId)
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .exchange()
                 .expectStatus().is3xxRedirection()
-                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/"+lastId);
+                .expectHeader().valueEquals(HttpHeaders.LOCATION, "/items/" + lastId);
         assertThat(redisTemplate.opsForValue().get("item:" + lastId) instanceof Item).isTrue();
     }
 
@@ -95,6 +111,7 @@ public class ItemControllerIntegrationTests extends BaseIntegrationControllerTes
         }
 
         @Test
+        @WithMockUser(username = "senja", roles = {"MODERATOR"})
         void test_addItem() throws Exception {
             try {
                 ClassPathResource resource = new ClassPathResource("test.jpg");
@@ -104,7 +121,7 @@ public class ItemControllerIntegrationTests extends BaseIntegrationControllerTes
                 multipartData.add("description", "Test description");
                 multipartData.add("price", "9.99");
                 multipartData.add("image", resource);
-                webTestClient.post()
+                webTestClient.mutateWith(csrf()).post()
                         .uri("/items/add")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .body(BodyInserters.fromMultipartData(multipartData))

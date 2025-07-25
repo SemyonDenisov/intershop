@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
 import ru.practicum.yandex.integration.BaseIntegrationServiceTests;
@@ -35,6 +36,7 @@ public class ItemServiceIntegrationTests extends BaseIntegrationServiceTests {
 
 
     @Test
+    @WithMockUser(username = "senja",roles = "MODERATOR")
     public void test_addItem() {
         try {
             FilePart mockFilePart = mock(FilePart.class);
@@ -52,6 +54,7 @@ public class ItemServiceIntegrationTests extends BaseIntegrationServiceTests {
 
 
     @Test
+    @WithMockUser(username = "senja")
     public void test_findById() {
         int id = itemsRepository.findAll().collectList().block().get(0).getId();
         Item item = itemService.findById(id).block();
@@ -60,8 +63,9 @@ public class ItemServiceIntegrationTests extends BaseIntegrationServiceTests {
     }
 
     @Test
+    @WithMockUser(username = "")
     public void test_findAll() {
-        List<Item> items = itemService.findAll(3, 1, "t", "NO","senja").collectList().block();
+        List<Item> items = itemService.findAll(3, 1, "t", "NO", "").collectList().block();
         assertEquals(3, items.size());
     }
 
