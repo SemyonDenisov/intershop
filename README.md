@@ -1,15 +1,23 @@
 Веб-приложение представляет собой витрину товаров, которые пользователь может положить в корзину и купить.
 
 *Запуск приложения*
-1) git clone https://github.com/SemyonDenisov/intershop.git
-2) cd .\intershop\yandex
-3) поменять savePath в application.yml для intershop на свой (абсолютный путь до папки storage\images, в случае запуска не в docker)
-4) mvn clean install
-5) для запуска через docker:  docker-compose up --build
-6) для запуска без docker: Windows запустить сценарий: starts_apps.bat  Linux запустить сценарий: ./start_apps.sh (для этиъ способов должен быть запущен redis или же сначала его запустить docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli")
+1) Запуск keycloak: docker run -d -p 8082:8080 --name keycloak   -e KC_BOOTSTRAP_ADMIN_USERNAME=admin   -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin   quay.io/keycloak/keycloak:26.1.3 start-dev 
+2) Настройка keycloak
+<img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/4579f18c-71e2-4e36-ab79-7a0ca196539a" />
+<img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/e27de003-0f6d-40b7-a680-bde2eeb14973" />
+<img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/c3fcc28e-6ad4-4a81-944b-ade95d2bdb44" />
 
-Изначально набалансе 20.0 единиц, если баланса не хватает для совершения покупки, то кнопка становится не аактивной
+3) Запуск redis: docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli" 
+4) mvn clean package
+5) windows - start_apps.cmd linux - start_apps.sh (внутри нужного подменить CLIENT_SECRET на тот, что сгенерировал keycloak или же напрямую в application.properties по пути intershop/resources)
 
+
+Два пользователя:
+- имя: senja пароль: 1 на балансе 20, роль пользователя и модератора (для добавления товаров)
+- имя: nesenja пароль 1 на балансе 777, роль только пользователя
+
+Для входа - попытаться нажать на любую кнопку (которая разрешена авторизованному и запрещена анонимному) 
+Для логаута - на страницу корзины кнопка "Выйти"
 
 **Функционал приложения**
 - Основное веб-приложение представляет собой витрину товаров, которые пользователь может положить в корзину и купить.
