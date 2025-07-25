@@ -9,7 +9,7 @@
 
 3) Запуск redis: docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli" 
 4) mvn clean package
-5) windows - start_apps.cmd linux - start_apps.sh (внутри нужного подменить CLIENT_SECRET на тот, что сгенерировал keycloak или же напрямую в application.properties по пути intershop/resources)
+5) windows - start_apps.cmd linux - start_apps.sh (внутри нужного подменить CLIENT_SECRET на тот, что сгенерировал keycloak или же напрямую в application.yaml по пути intershop/resources)
 
 
 Два пользователя:
