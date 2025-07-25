@@ -1,14 +1,16 @@
 Веб-приложение представляет собой витрину товаров, которые пользователь может положить в корзину и купить.
 
 *Запуск приложения*
+0) git clone https://github.com/SemyonDenisov/intershop.git
+0) cd .\intershop\yandex\
 1) Запуск keycloak: docker run -d -p 8082:8080 --name keycloak   -e KC_BOOTSTRAP_ADMIN_USERNAME=admin   -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin   quay.io/keycloak/keycloak:26.1.3 start-dev 
 2) Настройка keycloak
 <img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/4579f18c-71e2-4e36-ab79-7a0ca196539a" />
 <img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/e27de003-0f6d-40b7-a680-bde2eeb14973" />
 <img width="1920" height="890" alt="image" src="https://github.com/user-attachments/assets/c3fcc28e-6ad4-4a81-944b-ade95d2bdb44" />
 
-3) Запуск redis: docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli" 
-4) mvn clean package
+3) mvn clean package 
+4) Запуск redis: docker run --name redis-server -it --rm -p 6379:6379 redis:7.4.2-bookworm sh -c "redis-server && sleep 7 && redis-cli" 
 5) windows - start_apps.cmd linux - start_apps.sh (внутри нужного подменить CLIENT_SECRET на тот, что сгенерировал keycloak или же напрямую в application.yaml по пути intershop/resources)
 
 
