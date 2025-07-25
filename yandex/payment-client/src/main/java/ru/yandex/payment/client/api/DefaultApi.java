@@ -32,16 +32,13 @@ import reactor.core.publisher.Flux;
 @jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2025-07-18T22:36:48.959781700+04:00[Europe/Samara]", comments = "Generator version: 7.12.0")
 @RestController
 public class DefaultApi {
+
     private ApiClient apiClient;
 
     public DefaultApi(String paymentServiceName, int paymentServicePort) {
-        this(new ApiClient(paymentServiceName, paymentServicePort));
+        this.apiClient = (new ApiClient(paymentServiceName, paymentServicePort));
     }
 
-    @Autowired
-    public DefaultApi(ApiClient apiClient) {
-        this.apiClient = apiClient;
-    }
 
     public ApiClient getApiClient() {
         return apiClient;
@@ -63,7 +60,7 @@ public class DefaultApi {
      * @return CartPayment200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec cartPaymentRequestCreation(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
+    private ResponseSpec cartPaymentRequestCreation(CartPaymentRequest cartPaymentRequest, String accessToken) throws WebClientResponseException {
         Object postBody = cartPaymentRequest;
         // verify the required parameter 'cartPaymentRequest' is set
         if (cartPaymentRequest == null) {
@@ -74,6 +71,7 @@ public class DefaultApi {
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders headerParams = new HttpHeaders();
+        headerParams.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
@@ -104,10 +102,10 @@ public class DefaultApi {
      * @return CartPayment200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<CartPayment200Response> cartPayment(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
+    public Mono<CartPayment200Response> cartPayment(CartPaymentRequest cartPaymentRequest, String accessToken) throws WebClientResponseException {
         ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {
         };
-        return cartPaymentRequestCreation(cartPaymentRequest).bodyToMono(localVarReturnType);
+        return cartPaymentRequestCreation(cartPaymentRequest, accessToken).bodyToMono(localVarReturnType);
     }
 
     /**
@@ -121,10 +119,10 @@ public class DefaultApi {
      * @return ResponseEntity&lt;CartPayment200Response&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<CartPayment200Response>> cartPaymentWithHttpInfo(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
+    public Mono<ResponseEntity<CartPayment200Response>> cartPaymentWithHttpInfo(CartPaymentRequest cartPaymentRequest, String accessToken) throws WebClientResponseException {
         ParameterizedTypeReference<CartPayment200Response> localVarReturnType = new ParameterizedTypeReference<CartPayment200Response>() {
         };
-        return cartPaymentRequestCreation(cartPaymentRequest).toEntity(localVarReturnType);
+        return cartPaymentRequestCreation(cartPaymentRequest, accessToken).toEntity(localVarReturnType);
     }
 
     /**
@@ -138,8 +136,8 @@ public class DefaultApi {
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec cartPaymentWithResponseSpec(CartPaymentRequest cartPaymentRequest) throws WebClientResponseException {
-        return cartPaymentRequestCreation(cartPaymentRequest);
+    public ResponseSpec cartPaymentWithResponseSpec(CartPaymentRequest cartPaymentRequest, String accessToken) throws WebClientResponseException {
+        return cartPaymentRequestCreation(cartPaymentRequest, accessToken);
     }
 
     /**
@@ -152,7 +150,7 @@ public class DefaultApi {
      * @return GetBalanceById200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec getBalanceByIdRequestCreation(String userId) throws WebClientResponseException {
+    private ResponseSpec getBalanceByIdRequestCreation(String userId, String accessToken) throws WebClientResponseException {
         Object postBody = null;
         // verify the required parameter 'userId' is set
         if (userId == null) {
@@ -165,6 +163,7 @@ public class DefaultApi {
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders headerParams = new HttpHeaders();
+        headerParams.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
@@ -192,10 +191,10 @@ public class DefaultApi {
      * @return GetBalanceById200Response
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<GetBalanceById200Response> getBalanceById(String userId) throws WebClientResponseException {
+    public Mono<GetBalanceById200Response> getBalanceById(String userId, String accessToken) throws WebClientResponseException {
         ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {
         };
-        return getBalanceByIdRequestCreation(userId).bodyToMono(localVarReturnType);
+        return getBalanceByIdRequestCreation(userId, accessToken).bodyToMono(localVarReturnType);
     }
 
     /**
@@ -208,10 +207,10 @@ public class DefaultApi {
      * @return ResponseEntity&lt;GetBalanceById200Response&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<GetBalanceById200Response>> getBalanceByIdWithHttpInfo(String userId) throws WebClientResponseException {
+    public Mono<ResponseEntity<GetBalanceById200Response>> getBalanceByIdWithHttpInfo(String userId, String accessToken) throws WebClientResponseException {
         ParameterizedTypeReference<GetBalanceById200Response> localVarReturnType = new ParameterizedTypeReference<GetBalanceById200Response>() {
         };
-        return getBalanceByIdRequestCreation(userId).toEntity(localVarReturnType);
+        return getBalanceByIdRequestCreation(userId, accessToken).toEntity(localVarReturnType);
     }
 
     /**
@@ -224,7 +223,7 @@ public class DefaultApi {
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec getBalanceByIdWithResponseSpec(String userId) throws WebClientResponseException {
-        return getBalanceByIdRequestCreation(userId);
+    public ResponseSpec getBalanceByIdWithResponseSpec(String userId, String accessToken) throws WebClientResponseException {
+        return getBalanceByIdRequestCreation(userId, accessToken);
     }
 }

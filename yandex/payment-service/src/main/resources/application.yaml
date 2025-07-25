@@ -7,6 +7,15 @@ spring:
   password:
   jpa:
     defer-datasource-initialization: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/master
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.web.authentication: DEBUG
 jackson:
-serialization:
-  WRITE_DATES_AS_TIMESTAMPS=false
+  serialization: WRITE_DATES_AS_TIMESTAMPS=false

@@ -14,6 +14,8 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.ServerHttpBasicAuthenticationConverter;
@@ -34,13 +36,19 @@ import java.net.URI;
 public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
-                                                         ReactiveAuthenticationManager authenticationManager) {
+                                                         ReactiveAuthenticationManager authenticationManager,
+                                                         ReactiveClientRegistrationRepository clientRegistrationRepository) {
         AuthenticationWebFilter authFilter = new AuthenticationWebFilter(authenticationManager);
         authFilter.setServerAuthenticationConverter(new ServerHttpBasicAuthenticationConverter());
         WebSessionServerCsrfTokenRepository csrfTokenRepository = new WebSessionServerCsrfTokenRepository();
         var csrfHandler = new XorServerCsrfTokenRequestAttributeHandler();
 
         csrfHandler.setTokenFromMultipartDataEnabled( true);
+
+        OidcClientInitiatedServerLogoutSuccessHandler oidLogoutHandler =
+                new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository);
+        oidLogoutHandler.setPostLogoutRedirectUri("{baseUrl}");
+
 
         return http
                 .csrf(csrf -> csrf
@@ -66,7 +74,9 @@ public class SecurityConfiguration {
                                     exchange.getExchange().getResponse().setStatusCode(HttpStatus.SEE_OTHER);
                                     exchange.getExchange().getResponse().getHeaders().setLocation(URI.create("/main/items"));
                                     return exchange.getExchange().getResponse().setComplete();
-                                        }))
+                                        })
+                                .logoutSuccessHandler(oidLogoutHandler)
+                )
                 .securityContextRepository(new WebSessionServerSecurityContextRepository())
                 .build();
     }
