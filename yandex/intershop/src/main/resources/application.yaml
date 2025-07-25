@@ -39,7 +39,7 @@ spring:
             authorizationGrantType: client_credentials
             provider: keycloak
             client-id: intershop
-            client-secret: aFokk2jUtCx62X31lyZWMmzShBZ89uya
+            client-secret: ${CLIENT-SECRET:zprkVDnsGgjUf6tbpQxbAzJYPmYBZYnr}
             scope: openid, profile, email
             client-authentication-method: client_secret_post
 

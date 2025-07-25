@@ -10,6 +10,7 @@ start "payment-service" java -jar payment-service\target\payment-service-1.0.0.j
 
 REM Запуск intershop
 echo Запуск intershop...
+set CLIENT_SECRET=zprkVDnsGgjUf6tbpQxbAzJYPmYBZYnr
 start "intershop" java -jar intershop\target\intershop-0.0.1-SNAPSHOT.jar
 
 echo Все приложения запущены.
